@@ -1,4 +1,5 @@
 use <Lib/mattlib.scad>
+    shell_thickness = 4.125;
 
 
 // Fibonacci spiral, good approximation of the nautilus spiral
@@ -7,7 +8,6 @@ function r(theta) = pow((1+sqrt(5))/2, 2 * theta / 360) + shell_thickness / 3;
 module shellie(){
     baffle_hole = 81;
     opening_size = 90;
-    shell_thickness = 4.125;
 
     starting_size = 30;
     starting_full_size = 72;
@@ -53,7 +53,7 @@ module shellie(){
     theta_step = $preview ? 6 : 3;
     beta_step = 5;
     wall = false;
-    wall_step = 2;
+    wall_step = 6;
     wall_fill_percent = 85;
     half = false;
     beta_max = half ? 180 : 360;
@@ -63,7 +63,7 @@ module shellie(){
     pi = 3.1415926535898;
 
 
-    mirror([0, mirror ? 180 : 0, 0])
+    /*mirror([0, mirror ? 180 : 0, 0])
     scale(shell_scale)
     for(theta = [shell_min : theta_step : shell_max - theta_step]) {
         r11 = (r(theta) + r(theta - 360)) / 2;
@@ -138,7 +138,7 @@ module shellie(){
             }
 
         }
-    }
+    }*/
 
     module hole_cutter(number_of_holes, start_angle, centre_offset, hole_diameter, hole_depth){
       if(number_of_holes>0){
