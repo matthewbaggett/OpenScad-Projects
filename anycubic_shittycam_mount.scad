@@ -18,11 +18,6 @@ module cheapcam_bolt(){
         }
 }
 
-/*if($preview){
-    translate([-50,0,0])
-        rotate([0,90,0])
-            extrusion20x20(100);
-}*/
 
 module cameraMount(extensionLength){
     difference(){
@@ -74,6 +69,10 @@ module cameraMount(extensionLength){
 
 
 if($preview){
+    translate([-50,0,0])
+        rotate([0,90,0])
+            extrusion20x20(100);
+
     #translate([0,50,0])
         cheapcam_bolt();
     cameraMount(50);
