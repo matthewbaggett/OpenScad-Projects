@@ -35,10 +35,7 @@ module extrusion(length=10, outer=40, tSlot=8, gusset=4.5, bore=7){
                             translate([(outer-(gusset*2))/2,(outer-(gusset*2))/2,0])
                                 cylinder(d=gusset*2,h=length+4, center=true);
                         }
-
                     }
-                    
-                    
                 }
             }
             
@@ -56,7 +53,6 @@ module extrusion(length=10, outer=40, tSlot=8, gusset=4.5, bore=7){
             // Tappable Bore
             cylinder(d=bore, h=length+2, center=true);
         }
-            
     }
 }
 
@@ -95,5 +91,4 @@ translate([0,30+40,0])extrusion40x40(10);
 translate([40,0,0])extrusion40x20(10);
 translate([60,30,0])extrusion60x30(10);
 translate([80,30+40,0])extrusion80x40(10);
-
 /**/
