@@ -34,7 +34,7 @@ module metricSocketCap(mSize, length, structural=false,recessCap=0, chamfer=fals
     color(boltColour)
         translate([0,0,(length + ((mSize*1.25)/2))])
             cylinder(d=capSize,h=mSize*1.25, center=true, $fn=circleFacets);
-    echo (str("cap size is ", capSize));
+    //echo (str("cap size is ", capSize));
     if(recessCap > 0){
         color(boltClearanceColour)
         translate([0,0,(length + ((recessCap/2)+(mSize*1.25)))])
@@ -61,13 +61,13 @@ module metricSocketScrew(mSize, length, structural=false, recessCap=0, chamfer=f
 module metricCapheadAndBolt(mSize, length=40, structural=false, recessCap=0, recessNut=0, chamfer=false){
     capSize = (mSize * capSizeMSizeMultiplier) + printingKerfMM;
 
-    echo (str("Creating a M",mSize, " size, ", length, "mm long bolt with a ", capSize, "mm wide caphead and bolt ", chamfer?"with":"without", " chamfering."));
+    /*echo (str("Creating a M",mSize, " size, ", length, "mm long bolt with a ", capSize, "mm wide caphead and bolt ", chamfer?"with":"without", " chamfering."));
     if(recessCap){
         echo (str("It has a ", recessCap, "mm recessed cap"));
     }
     if(recessNut){
         echo (str("It has a ", recessCap, "mm recessed nut"));
-    }
+    }/**/
     translate([0,0,((length/2)+((mSize*1.25)/2))*-1])
     union(){
         translate([0, 0, 0])
