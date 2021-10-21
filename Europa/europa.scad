@@ -10,7 +10,7 @@ module europa_raw(){
     difference(){
         translate([1.245,73.638,0])
             rotate(180)
-                import("europa-solid_fixed.stl");
+                import("source_stls/europa-solid_fixed.stl");
         translate([0,0,-5])
             cube([300,300,10], center=true);
     }
@@ -81,12 +81,14 @@ module europa_body_top(halved=false){
 }
 
 module components_output(halfed=false){
-    
-
-    europa_facia(halved=halved);
-    europa_body_top(halved=halved);
-    europa_body_middle(halved=halved);
-    europa_body_bottom(halved=halved);
+    if(part==undef || part=="facia")
+        europa_facia(halved=halved);
+    if(part==undef || part=="top")
+        europa_body_top(halved=halved);
+    if(part==undef || part=="middle")
+        europa_body_middle(halved=halved);
+    if(part==undef || part=="bottom")
+        europa_body_bottom(halved=halved);
 }
 
 module bolt_holes(){
