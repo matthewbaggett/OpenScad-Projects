@@ -1,4 +1,5 @@
-
+use <mirrorcopy.scad>
+$fn=60;
 module doubleExtrusion(width,length){
     extraWallWidth = width*0.09;
     mirrorCopy([0,1,0]){
@@ -10,9 +11,7 @@ module doubleExtrusion(width,length){
     children();
     translate([(width/2)*-1,0,0])
     children();
-    
 }
-
 
 module extrusion(length=10, outer=40, tSlot=8, gusset=4.5, bore=7){
     translate([0,0,length/2])
@@ -32,9 +31,9 @@ module extrusion(length=10, outer=40, tSlot=8, gusset=4.5, bore=7){
                         }
                         difference(){
                             translate([((outer-(gusset))/2)+1,((outer-(gusset))/2)+1,0])
-                            cube([gusset+1,gusset+1,length+2], center=true);
+                                cube([gusset*2,gusset*2,length+2], center=true);
                             translate([(outer-(gusset*2))/2,(outer-(gusset*2))/2,0])
-                            cylinder(r=gusset,h=length+4, center=true);
+                                cylinder(d=gusset*2,h=length+4, center=true);
                         }
 
                     }
@@ -88,7 +87,7 @@ module extrusion40x40(length)
 {
     extrusion(length=length, outer=40,tSlot=8, gusset=4.5, bore=7);
 }
-/*
+/**/
 translate([0,0,0])extrusion20x20(10);
 translate([0,30,0])extrusion30x30(10);
 translate([0,30+40,0])extrusion40x40(10);
@@ -97,4 +96,4 @@ translate([40,0,0])extrusion40x20(10);
 translate([60,30,0])extrusion60x30(10);
 translate([80,30+40,0])extrusion80x40(10);
 
-*/
+/**/
