@@ -1,5 +1,4 @@
 use <mirrorcopy.scad>
-$fn=60;
 module doubleExtrusion(width,length){
     extraWallWidth = width*0.09;
     mirrorCopy([0,1,0]){
