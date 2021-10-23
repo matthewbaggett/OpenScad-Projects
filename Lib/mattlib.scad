@@ -5,3 +5,4 @@ include <../Lib/extrusion.scad>;
 include <../Lib/pcd.scad>;
 include <../Lib/metric_bolts.scad>;
 include <../Lib/corner_radiuser.scad>;
+include <../Lib/gears.scad>;
