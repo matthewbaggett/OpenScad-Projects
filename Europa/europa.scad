@@ -234,22 +234,12 @@ module bolt_filler(){
     }
 }
 //part="facia";
-$splitInHalf = $splitInHalf == undef ? false : $splitInHalf;
+
 
 if(!$preview) {
-    if ($splitInHalf) {
-        echo (str("Model will be split in half"));
-        difference() {
-            components_output();
-            // Cut model in half for easier viewing
-            translate([75, 0, 325])cube([150, 600, 650], center = true);
-        }
-    }else {
-        echo (str("Model will be kept intact"));
-        components_output();
-    }
+    components_output();
 }else{
-    //#europa();
+    #europa();
     bolt_holes();
     color("green")bolt_filler();
     //floppy_disk_support();

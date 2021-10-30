@@ -1,16 +1,31 @@
 use <Lib/mattlib.scad>
 
-$fn=360;
+$fn=120;
 
-diameter = 20;
+diameter = 25;
+height=99;
 textDiaRatio = 0.25;
-scale([1,1,1])
-difference(){
-    color("orange")
-    translate([0,0,diameter/2])
-    cylinder(h=diameter, d=diameter, center=true);
 
-    translate([0,0,diameter-1])
-    linear_extrude(2)
-    text(text=str(diameter, "mm"), size=diameter*textDiaRatio,halign="center", valign="center");
+module testCyl(height, diameter){
+    color("orange")
+    difference(){
+
+        translate([0,0,height/2])
+        cylinder(h=height, d=diameter, center=true);
+
+        translate([0,3.5,height-1])
+            linear_extrude(2)
+                text(text=str(diameter, "w"), size=diameter*textDiaRatio,halign="center", valign="center", spacing=1.1);
+        translate([0,-3.5,height-1])
+            linear_extrude(2)
+                text(text=str(height, "h"), size=diameter*textDiaRatio,halign="center", valign="center", spacing=1.1);
+    }
 }
+
+
+translate([0,0,0])
+    testCyl(20,20);
+translate([0,25,0])
+    testCyl(50,20);
+translate([0,50,0])
+    testCyl(99,25);

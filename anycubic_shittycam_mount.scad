@@ -2,6 +2,9 @@ use <Lib/mattlib.scad>;
 $fn = 60;
 
 module cheapcam_bolt(){
+    #rotate([0,90,0])
+        metricCapheadAndBolt(6, 30, recessCap=1, recessNut=1);
+    /*
     shaftLength = 34.5;
     color("orange")
         rotate([0,90,0]){
@@ -15,7 +18,7 @@ module cheapcam_bolt(){
             translate([0,0,(shaftLength/2)+(1.2/2)+1.2])cylinder(h=1.2,d=8.2, center=true);
             // Shaft
             cylinder(h=shaftLength,d=3.75, center=true);
-        }
+        }*/
 }
 
 
@@ -67,27 +70,76 @@ module cameraMount(extensionLength){
     }
 }
 
+shittycamLength=120;
+extensionLength=60;
+
+
+module cameraMountExtensionForGeneralPlusCamera(){
+    
+    difference(){
+        union(){
+            hull(){
+                translate([0,shittycamLength,0])
+                    rotate([0,90,0])
+                        cylinder(h=19.5,d=15, center=true);
+                translate([0,shittycamLength+15,0])
+                    rotate([0,90,0])
+                        cylinder(h=19.5,d=15, center=true);
+            }
+            hull(){
+                translate([0,shittycamLength+(15),0])
+                    rotate([0,90,0])
+                        cylinder(h=38,d=15, center=true);
+                translate([0,shittycamLength+extensionLength,0])
+                    cylinder(h=15,d=15, center=true);
+            }
+        }
+        translate([0,shittycamLength,0])cheapcam_bolt();  
+        translate([0,shittycamLength+extensionLength-3,-6.25-0.01]){
+            translate([0,0,2.75+6.5])cylinder(d1=3.5,d2=10,h=10, center=true);
+            translate([0,0,2.75])cylinder(d=2.2,h=3, center=true);
+            cube([5.5,5.5,2.5], center=true);
+        }
+    }
+}
+
+
 
 if($preview){
     translate([-50,0,0])
         rotate([0,90,0])
             extrusion20x20(100);
 
-    #translate([0,50,0])
-        cheapcam_bolt();
-    cameraMount(50);
+    //#translate([0,shittycamLength,0])cheapcam_bolt();
+    cameraMount(shittycamLength);
+    
+    cameraMountExtensionForGeneralPlusCamera();
 }else{
-    translate([-25,0,-10])
-        rotate([90,0,0])
-            difference(){
-                cameraMount(50);
-                translate([0,-150+10,0])cube([300,300,300], center=true);
+    if(part==undef || part=="top") {
+        translate([- 25, 0, - 10]) {
+            rotate([90, 0, 0]) {
+                difference() {
+                    cameraMount(shittycamLength);
+                    translate([0, - 150 + 10, 0])cube([300, 300, 300], center = true);
+                }
             }
+        }
+    }
 
-    translate([25,0,10])
-        rotate([-90,0,0])
-            difference() {
-                cameraMount(50);
-                translate([0, 150 + 10, 0])cube([300, 300, 300], center = true);
+    if(part==undef || part=="bottom") {
+        translate([25, 0, 10]) {
+            rotate([- 90, 0, 0]) {
+                difference() {
+                    cameraMount(shittycamLength);
+                    translate([0, 150 + 10, 0])cube([300, 300, 300], center = true);
+                }
             }
+        }
+    }
+    
+    if(part==undef || part=="generalcam") {
+        translate([80,0-shittycamLength-(extensionLength/2),0])
+        cameraMountExtensionForGeneralPlusCamera();
+    }
+    
 }
