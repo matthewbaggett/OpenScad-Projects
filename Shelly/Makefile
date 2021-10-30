@@ -1,17 +1,17 @@
 
 .PHONY: build all
 
-all:
+all: shellie
 
-shellie_benchmark:
-	time \
+shellie:
+	echo -n "capside nutside" | \
+		xargs -d ' ' --no-run-if-empty -n1 -P1 -I {} \
 		docker run --rm \
 			-v $(PWD):/src \
 				bbassett/openscad \
 					openscad \
-						-o /src/shelly.stl \
-						-D 'startPi=4.75' \
-						-D 'endPi=5' \
+						-o /src/shelly_{}.stl \
+						-D 'part="{}"' \
 						/src/shelly_mk3.scad
 
 
