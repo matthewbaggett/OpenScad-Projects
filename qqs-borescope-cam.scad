@@ -4,25 +4,6 @@ bore=7.2+0.4; // 7.2mm + bullshit factor
 angleTiltDown=20;
 bodyRadiusMM = 3;
 
-/*
-translate([(18/2)*-1,0,0])
-color("green")difference(){
-    union(){
-        cube([18,10,23.50]);
-        translate([0,-10,12.5])
-        cube([18,10,2]);
-        translate([0,-2.3,20.5])
-        cube([18,2.3,3]);
-    }
-    
-    translate([18/2,0,5])
-    rotate([-90+angleTiltDown,0,0])
-    #cylinder(40,d=bore,center=true);
-    translate([18/2,-5.5,zOffset])
-    #cylinder(4,d=3.2);   
-}/**/
-
-
 module qqs_borescope_cam_mount(){
     difference(){
         union(){
