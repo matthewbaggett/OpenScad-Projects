@@ -1,3 +1,15 @@
+use <../Lib/mattlib.scad>;
+
+boltLengthMM = 40;
+bolt1 = [0,108,0];
+bolt2 = [85,0,0];
+bolt3 = [0,-66,0];
+bolt4 = [-55,0,0];
+support1Height = 99;
+support2Height = 78;
+support3Height = 61.75;
+support4Height = 48.15;
+
 module hole_cutter(number_of_holes, start_angle, centre_offset, hole_diameter, hole_depth){
   if(number_of_holes>0){
     for(i=[start_angle:(360/number_of_holes):360+start_angle]){
@@ -9,9 +21,11 @@ module hole_cutter(number_of_holes, start_angle, centre_offset, hole_diameter, h
     }  
   }
 }
-
 module shelly(){
-
+    //render()
+    rotate(90)shellyRaw();
+}
+module shellyRaw(){
     baffle_hole = 81;
     opening_size = 90;
     shell_thickness = 4.125;
@@ -52,7 +66,7 @@ module shelly(){
 
     // Shell
     shell_scale = [actual_ratio, actual_ratio, actual_ratio]; // 30 mm opening, 72 mm full size
-    shell_min = 360*(startPi==undef?2:startPi); // default=2
+    shell_min = 360*(startPi==undef?0:startPi); // default=2
     shell_max = 360*(endPi==undef?5:endPi); // default=5
     theta_step = 6;
     beta_step = 5;
@@ -76,40 +90,128 @@ module shelly(){
         union(){
             for(theta = [shell_min : theta_step : shell_max - theta_step]) {
                 percentage = (100/(shell_max - theta_step - shell_min)) * (theta-shell_min);
-                echo (str("Shelly generation ", percentage, "% complete... "));
+                //echo (str("Shelly generation ", percentage, "% complete... "));
                 //echo (str("theta=", theta, " shell_min=", shell_min, " theta_step=", theta_step, " limit=", (shell_max - theta_step)));
+                r11 = (r(theta) + r(theta - 360)) / 2;
+                r12 = (r(theta + theta_step) + r(theta + theta_step - 360)) / 2;
+                r21 = (r(theta) - r(theta - 360)) / 2 - shell_thickness / 2;
+                r22 = (r(theta) - r(theta - 360)) / 2 + shell_thickness / 2;
+                r23 = (r(theta + theta_step) - r(theta + theta_step - 360)) / 2 - shell_thickness / 2;
+                r24 = (r(theta + theta_step) - r(theta + theta_step - 360)) / 2 + shell_thickness / 2;
                 beta_max = half ? 180 : 360;
-                
-                for(beta = [0 : beta_step : beta_max - beta_step]) {
-                    polyhedron(
+
+                union() {
+                    for (beta = [0 : beta_step : beta_max - beta_step]) {
+                        //echo (str("beta=", beta, " beta_step=", beta_step, " limit=", (beta_max - beta_step)));
+                        rb11 = r21 * cos(beta);
+                        rb12 = r22 * cos(beta);
+                        rb13 = r23 * cos(beta);
+                        rb14 = r24 * cos(beta);
+                        rb21 = r21 * cos(beta + beta_step);
+                        rb22 = r22 * cos(beta + beta_step);
+                        rb23 = r23 * cos(beta + beta_step);
+                        rb24 = r24 * cos(beta + beta_step);
+                        theta_mod = theta % 360;
+                        // These fudge factors are required to force the object to be simple
+                        xf = 0.001 * ((beta >= 0 && beta < 180) ? - 1 : 1);
+                        yf = 0.001 * (((theta_mod >= 0 && theta_mod < 90) || (theta_mod >= 270 && theta_mod < 360)) ? 1
+                            : - 1);
+                        x1 = (r11 + rb11) * cos(theta);
+                        x2 = (r11 + rb21) * cos(theta) + xf;
+                        x3 = (r12 + rb23) * cos(theta + theta_step) + xf;
+                        x4 = (r12 + rb13) * cos(theta + theta_step);
+                        x5 = (r11 + rb12) * cos(theta);
+                        x6 = (r11 + rb22) * cos(theta) + xf;
+                        x7 = (r12 + rb24) * cos(theta + theta_step) + xf;
+                        x8 = (r12 + rb14) * cos(theta + theta_step);
+                        y1 = (r11 + rb11) * sin(theta);
+                        y2 = (r11 + rb21) * sin(theta);
+                        y3 = (r12 + rb23) * sin(theta + theta_step) + yf;
+                        y4 = (r12 + rb13) * sin(theta + theta_step) + yf;
+                        y5 = (r11 + rb12) * sin(theta);
+                        y6 = (r11 + rb22) * sin(theta);
+                        y7 = (r12 + rb24) * sin(theta + theta_step) + yf;
+                        y8 = (r12 + rb14) * sin(theta + theta_step) + yf;
+                        z1 = r21 * sin(beta);
+                        z2 = r21 * sin(beta + beta_step);
+                        z3 = r23 * sin(beta + beta_step);
+                        z4 = r23 * sin(beta);
+                        z5 = r22 * sin(beta);
+                        z6 = r22 * sin(beta + beta_step);
+                        z7 = r24 * sin(beta + beta_step);
+                        z8 = r24 * sin(beta);
+
+                        // octahedron
+                        polyhedron(
                         points = [
-                            [(((r(theta) + r(theta - 360)) / 2) + ((r(theta) - r(theta - 360)) / 2 - shell_thickness / 2) * cos(beta)) * cos(theta),                                 (((r(theta) + r(theta - 360)) / 2) + ((r(theta) - r(theta - 360)) / 2 - shell_thickness / 2) * cos(beta)) * sin(theta), ((r(theta) - r(theta - 360)) / 2 - shell_thickness / 2) * sin(beta)],
-                            [(((r(theta) + r(theta - 360)) / 2) + ((r(theta) - r(theta - 360)) / 2 - shell_thickness / 2) * cos(beta + beta_step)) * cos(theta) + (0.001 * ((beta >= 0 && beta < 180) ? -1 : 1)),                 (((r(theta) + r(theta - 360)) / 2) + ((r(theta) - r(theta - 360)) / 2 - shell_thickness / 2) * cos(beta + beta_step)) * sin(theta),                       ((r(theta) - r(theta - 360)) / 2 - shell_thickness / 2) * sin(beta + beta_step)],
-                            [(((r(theta + theta_step) + r(theta + theta_step - 360)) / 2) + ((r(theta + theta_step) - r(theta + theta_step - 360)) / 2 - shell_thickness / 2) * cos(beta + beta_step)) * cos(theta + theta_step) + (0.001 * ((beta >= 0 && beta < 180) ? -1 : 1)),    (((r(theta + theta_step) + r(theta + theta_step - 360)) / 2) + ((r(theta + theta_step) - r(theta + theta_step - 360)) / 2 - shell_thickness / 2) * cos(beta + beta_step)) * sin(theta + theta_step) + (0.001 * ((((theta % 360) >= 0 && (theta % 360) < 90) || ((theta % 360) >= 270 && (theta % 360) < 360)) ? 1 : -1)),     ((r(theta + theta_step) - r(theta + theta_step - 360)) / 2 - shell_thickness / 2) * sin(beta + beta_step)],
-                            [(((r(theta + theta_step) + r(theta + theta_step - 360)) / 2) + ((r(theta + theta_step) - r(theta + theta_step - 360)) / 2 - shell_thickness / 2) * cos(beta)) * cos(theta + theta_step),                     (((r(theta + theta_step) + r(theta + theta_step - 360)) / 2) + ((r(theta + theta_step) - r(theta + theta_step - 360)) / 2 - shell_thickness / 2) * cos(beta)) * sin(theta + theta_step) + (0.001 * ((((theta % 360) >= 0 && (theta % 360) < 90) || ((theta % 360) >= 270 && (theta % 360) < 360)) ? 1 : -1)),                 ((r(theta + theta_step) - r(theta + theta_step - 360)) / 2 - shell_thickness / 2) * sin(beta)],
-                            [(((r(theta) + r(theta - 360)) / 2) + ((r(theta) - r(theta - 360)) / 2 + shell_thickness / 2) * cos(beta)) * cos(theta),                                  (((r(theta) + r(theta - 360)) / 2) + ((r(theta) - r(theta - 360)) / 2 + shell_thickness / 2) * cos(beta)) * sin(theta),                                   ((r(theta) - r(theta - 360)) / 2 + shell_thickness / 2) * sin(beta)],
-                            [(((r(theta) + r(theta - 360)) / 2) + ((r(theta) - r(theta - 360)) / 2 + shell_thickness / 2) * cos(beta + beta_step)) * cos(theta) + (0.001 * ((beta >= 0 && beta < 180) ? -1 : 1)), (((r(theta) + r(theta - 360)) / 2) + ((r(theta) - r(theta - 360)) / 2 + shell_thickness / 2) * cos(beta + beta_step)) * sin(theta), ((r(theta) - r(theta - 360)) / 2 + shell_thickness / 2) * sin(beta + beta_step)],
-                            [(((r(theta + theta_step) + r(theta + theta_step - 360)) / 2) + ((r(theta + theta_step) - r(theta + theta_step - 360)) / 2 + shell_thickness / 2) * cos(beta + beta_step)) * cos(theta + theta_step) + (0.001 * ((beta >= 0 && beta < 180) ? -1 : 1)), (((r(theta + theta_step) + r(theta + theta_step - 360)) / 2) + ((r(theta + theta_step) - r(theta + theta_step - 360)) / 2 + shell_thickness / 2) * cos(beta + beta_step)) * sin(theta + theta_step) + (0.001 * ((((theta % 360) >= 0 && (theta % 360) < 90) || ((theta % 360) >= 270 && (theta % 360) < 360)) ? 1 : -1)), ((r(theta + theta_step) - r(theta + theta_step - 360)) / 2 + shell_thickness / 2) * sin(beta + beta_step)],
-                            [(((r(theta + theta_step) + r(theta + theta_step - 360)) / 2) + ((r(theta + theta_step) - r(theta + theta_step - 360)) / 2 + shell_thickness / 2) * cos(beta)) * cos(theta + theta_step), (((r(theta + theta_step) + r(theta + theta_step - 360)) / 2) + ((r(theta + theta_step) - r(theta + theta_step - 360)) / 2 + shell_thickness / 2) * cos(beta)) * sin(theta + theta_step) + (0.001 * ((((theta % 360) >= 0 && (theta % 360) < 90) || ((theta % 360) >= 270 && (theta % 360) < 360)) ? 1 : -1)), ((r(theta + theta_step) - r(theta + theta_step - 360)) / 2 + shell_thickness / 2) * sin(beta)]
-                        ],
+                                [x1, y1, z1], [x2, y2, z2], [x3, y3, z3], [x4, y4, z4],
+                                [x5, y5, z5], [x6, y6, z6], [x7, y7, z7], [x8, y8, z8]
+                            ],
                         faces = [
                             // Bottom
-                            [3, 0, 1], [3, 1, 2],
+                                [3, 0, 1], [3, 1, 2],
                             // Front
-                            [0, 4, 5], [0, 5, 1],
+                                [0, 4, 5], [0, 5, 1],
                             // Right
-                            [1, 5, 6], [1, 6, 2],
+                                [1, 5, 6], [1, 6, 2],
                             // Left
-                            [3, 7, 4], [3, 4, 0],
+                                [3, 7, 4], [3, 4, 0],
                             // Top
-                            [4, 7, 6], [4, 6, 5],
+                                [4, 7, 6], [4, 6, 5],
                             // Back
-                            [7, 3, 2], [7, 2, 6]
-                        ]
-                    );/**/
+                                [7, 3, 2], [7, 2, 6]
+                            ]
+                        );/**/
+                    }
                 }
             }
         }
     }
 }
-shelly();
+
+
+
+module bolt(boltDim){
+    translate(boltDim + [0,0,0])
+    metricCapheadAndBolt(6, 40,recessNut=35, recessCap=30);
+}
+module boltStruct(boltDim, boltHeight){
+    color("green")
+    translate(boltDim + [0,0,boltHeight*-0.5])
+    cylinder(h=boltHeight,d=14, $fn=360);
+}
+
+module processedShelly(){
+    difference(){
+        union(){
+            shelly();
+
+            boltStruct(bolt1, support1Height);
+            boltStruct(bolt2, support2Height);
+            boltStruct(bolt3, support3Height);
+            boltStruct(bolt4, support4Height);
+        }
+            
+        bolt(bolt1);        
+        bolt(bolt2);
+        bolt(bolt3);
+        bolt(bolt4);
+    }
+}
+
+translate([85,0,0]){
+    difference(){
+        processedShelly();
+        translate([0,0,-100])cube([500,500,200], center=true);
+    }
+}
+translate([-85,0,0]){
+    rotate(180){
+        rotate([180,0,0]){
+            difference(){
+                processedShelly();
+                translate([0,0,100])cube([500,500,200], center=true);        
+            }
+        }
+    }
+}
