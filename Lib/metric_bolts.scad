@@ -26,10 +26,10 @@ module metricBoltHex(mSize, structural=false, recessNut=0, chamfer=false){
     }
 }
 
-module metricSocketCap(mSize, length, structural=false,recessCap=0, chamfer=false){
+module metricSocketCap(mSize, length, structural=false,recessCap=0, chamfer=false, overrideCapSize=0){
     //cap size = M number * 1.5.
     // We add 1% to make the cap head spin nicely in the hole.
-    capSize = (mSize * capSizeMSizeMultiplier) + printingKerfMM;
+    capSize = overrideCapSize > 0 ? overrideCapSize : (mSize * capSizeMSizeMultiplier) + printingKerfMM;
     
     color(boltColour)
         translate([0,0,(length + ((mSize*1.25)/2))])
@@ -53,13 +53,13 @@ module metricShaft(mSize, length, structural=false){
             cylinder(d=mSize+printingKerfMM, h=length+0.01, center=true, $fn=circleFacets);
 }
 
-module metricSocketScrew(mSize, length, structural=false, recessCap=0, chamfer=false){
-    metricSocketCap(mSize, length, structural=structural, recessCap=recessCap, chamfer=chamfer);
+module metricSocketScrew(mSize, length, structural=false, recessCap=0, chamfer=false, overrideCapSize=0){
+    metricSocketCap(mSize, length, structural=structural, recessCap=recessCap, chamfer=chamfer, overrideCapSize=overrideCapSize);
     metricShaft(mSize, length, structural=structural);
 }
 
-module metricCapheadAndBolt(mSize, length=40, structural=false, recessCap=0, recessNut=0, chamfer=false){
-    capSize = (mSize * capSizeMSizeMultiplier) + printingKerfMM;
+module metricCapheadAndBolt(mSize, length=40, structural=false, recessCap=0, recessNut=0, chamfer=false, overrideCapSize=0){
+    capSize = overrideCapSize > 0 ? overrideCapSize : (mSize * capSizeMSizeMultiplier) + printingKerfMM;
 
     /*echo (str("Creating a M",mSize, " size, ", length, "mm long bolt with a ", capSize, "mm wide caphead and bolt ", chamfer?"with":"without", " chamfering."));
     if(recessCap){
@@ -71,7 +71,7 @@ module metricCapheadAndBolt(mSize, length=40, structural=false, recessCap=0, rec
     translate([0,0,((length/2)+((mSize*1.25)/2))*-1])
     union(){
         translate([0, 0, 0])
-        metricSocketScrew(mSize, length, structural=structural, recessCap=recessCap, chamfer=chamfer);
+        metricSocketScrew(mSize, length, structural=structural, recessCap=recessCap, chamfer=chamfer, overrideCapSize=overrideCapSize);
         metricBoltHex(mSize,structural, recessNut=recessNut, chamfer=chamfer);
     }
 }
