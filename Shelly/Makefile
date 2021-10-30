@@ -1,17 +1,24 @@
 
 .PHONY: build all
 
-all: shellie
+all: shelly
 
-shellie:
-	echo -n "capside nutside" | \
-		xargs -d ' ' --no-run-if-empty -n1 -P1 -I {} \
-		docker run --rm \
-			-v $(PWD):/src \
-				bbassett/openscad \
-					openscad \
-						-o /src/shelly_{}.stl \
-						-D 'part="{}"' \
-						/src/shelly_mk3.scad
+shelly: shelly_capside shelly_nutside
 
+shelly_capside:
+	docker run --rm \
+		-v $(PWD)/..:/src \
+			bbassett/openscad \
+				openscad \
+					-o /src/Shelly/shelly_capside.stl \
+					-D 'part="capside"' \
+					/src/Shelly/shelly_mk3.scad
 
+shelly_nutside:
+	docker run --rm \
+		-v $(PWD)/..:/src \
+			bbassett/openscad \
+				openscad \
+					-o /src/Shelly/shelly_nutside.stl \
+					-D 'part="nutside"' \
+					/src/Shelly/shelly_mk3.scad
