@@ -1,14 +1,14 @@
 use <../Lib/mattlib.scad>;
 
 boltLengthMM = 40;
-bolt1 = [24,103,0];
-bolt2 = [85,0,0];
-bolt3 = [0,-66,0];
-bolt4 = [-55,0,0];
-support1Height = 99;
-support2Height = 78;
-support3Height = 61.75;
-support4Height = 48.15;
+bolt1 = [25,95,0];
+bolt2 = [79,0,0];
+bolt3 = [0,-62,0];
+bolt4 = [-50,0,0];
+support1Height = 87;
+support2Height = 72;
+support3Height = 56;
+support4Height = 45;
 
 module hole_cutter(number_of_holes, start_angle, centre_offset, hole_diameter, hole_depth){
   if(number_of_holes>0){
@@ -33,7 +33,7 @@ module shelly() {
 }
 module shellyRaw(){
     baffle_hole = 72;
-    opening_size = 90;
+    opening_size = 83;
     shell_thickness = 4.125;
 
     starting_size = 30;
@@ -56,6 +56,9 @@ module shellyRaw(){
           cylinder(d=baffle_outer, h=baffle_length, $fn=80);
           translate([0,0,-1]){
             cylinder(d=baffle_hole, h=(opening_size/2)+2, $fn=80);
+          }
+          translate([0,0,30]){
+            cylinder(d=90, h=5, $fn=80);
           }
           translate([0,0,shell_thickness]){
             hole_cutter(4, 45, 82/2, 4, baffle_length);  
@@ -222,8 +225,8 @@ color("orange"){
 }/**/
 
 if($preview){
-    #cylinder(h=100,d=250, center=true, $fn=60);
-    translate([-10,-22,0])
+    //#cylinder(h=100,d=250, center=true, $fn=60);
+    //translate([-10,-30,0])
         processedShelly();
 }else{
     if(part==undef || part=="cap_side"){
