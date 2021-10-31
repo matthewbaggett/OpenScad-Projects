@@ -22,9 +22,14 @@ module hole_cutter(number_of_holes, start_angle, centre_offset, hole_diameter, h
   }
 }
 module shelly() {
-    rotate(90)
-        render()
-            shellyRaw();
+    if($preview){
+        rotate(90)
+            shellyRaw();    
+    }else {
+        rotate(90)
+            render()
+                shellyRaw();
+    }
 }
 module shellyRaw(){
     baffle_hole = 72;
@@ -208,24 +213,30 @@ color("orange"){
     }
 }/**/
 
-if(part==undef || part=="cap_side"){
-   translate([85,0,0]){
-        difference(){
-            processedShelly();
-            translate([0,0,-100])cube([500,500,200], center=true);
-        }
-    }
-}
-/**/
-if(part==undef || part=="nut_side"){
-    translate([-85,0,0]){
-        rotate(180){
-            rotate([180,0,0]){
-                difference(){
-                    processedShelly();
-                    translate([0,0,100])cube([500,500,200], center=true);        
-                }
+if($preview){
+    #cylinder(h=100,d=250, center=true, $fn=60);
+    translate([-10,-22,0])
+        processedShelly();
+}else{
+    if(part==undef || part=="cap_side"){
+       translate([85,0,0]){
+            difference(){
+                processedShelly();
+                translate([0,0,-100])cube([450,450,200], center=true);
             }
         }
     }
-}/**/
+    /**/
+    if(part==undef || part=="nut_side"){
+        translate([-85,0,0]){
+            rotate(180){
+                rotate([180,0,0]){
+                    difference(){
+                        processedShelly();
+                        translate([0,0,100])cube([450,450,200], center=true);        
+                    }
+                }
+            }
+        }
+    }/**/
+}
