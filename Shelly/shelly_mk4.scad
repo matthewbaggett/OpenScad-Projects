@@ -63,6 +63,14 @@ module shellyRaw(){
         }
       }
     }
+    
+    // center plug
+    scale([1,1,0.95]){
+        translate([3,-0.25,0]){
+            sphere(d=14.5, $fn=60);
+        }
+    }
+    
 
     // Shell
     shell_scale = [actual_ratio, actual_ratio, actual_ratio]; // 30 mm opening, 72 mm full size
