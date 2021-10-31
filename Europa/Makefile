@@ -9,8 +9,7 @@ build:
 				run \
 					--rm \
 					-v $(PWD)/../:/src \
-					bbassett/openscad \
-						openscad \
+					matthewbaggett/openscad \
 							-o /src/Europa/build/{}.stl \
 							-D 'part="{}"' \
 							/src/Europa/europa.scad
