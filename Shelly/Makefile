@@ -6,19 +6,21 @@ all: shelly
 shelly: shelly_capside shelly_nutside
 
 shelly_capside:
-	docker run --rm \
+	docker run \
+		--name=shelly_cap_side \
+		--rm \
 		-v $(PWD)/..:/src \
-			bbassett/openscad \
-				openscad \
-					-o /src/Shelly/shelly_capside.stl \
-					-D 'part="capside"' \
-					/src/Shelly/shelly_mk3.scad
+			matthewbaggett/openscad \
+				-o /src/Shelly/shelly_cap_side.stl \
+				-D 'part="cap_side"' \
+				/src/Shelly/shelly_mk4.scad
 
 shelly_nutside:
-	docker run --rm \
+	docker run \
+		--name=shelly_nut_side \
+		--rm \
 		-v $(PWD)/..:/src \
-			bbassett/openscad \
-				openscad \
-					-o /src/Shelly/shelly_nutside.stl \
-					-D 'part="nutside"' \
-					/src/Shelly/shelly_mk3.scad
+			matthewbaggett/openscad \
+				-o /src/Shelly/shelly_nut_side.stl \
+				-D 'part="nut_side"' \
+				/src/Shelly/shelly_mk4.scad

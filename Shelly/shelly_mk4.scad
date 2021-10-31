@@ -1,7 +1,7 @@
 use <../Lib/mattlib.scad>;
 
 boltLengthMM = 40;
-bolt1 = [0,108,0];
+bolt1 = [24,103,0];
 bolt2 = [85,0,0];
 bolt3 = [0,-66,0];
 bolt4 = [-55,0,0];
@@ -15,30 +15,25 @@ module hole_cutter(number_of_holes, start_angle, centre_offset, hole_diameter, h
     for(i=[start_angle:(360/number_of_holes):360+start_angle]){
       rotate([0,0,i]){
         translate([-centre_offset,0,0]){
-          cylinder(d=hole_diameter, h=hole_depth+2);
+          cylinder(d=hole_diameter, h=hole_depth+2, $fn=30);
         }
       }
     }  
   }
 }
-module shelly(){
-    //render()
-    rotate(90)shellyRaw();
+module shelly() {
+    rotate(90)
+        render()
+            shellyRaw();
 }
 module shellyRaw(){
-    baffle_hole = 81;
+    baffle_hole = 72;
     opening_size = 90;
     shell_thickness = 4.125;
-
-    plinth_height = 15;
 
     starting_size = 30;
     starting_full_size = 72;
     starting_ratio = 0.4175;
-
-    distance_between_posts = 25;
-    post_diameter = 5;
-    min_wall = 5;
 
     scaling = (opening_size/starting_size);
 
@@ -58,7 +53,7 @@ module shellyRaw(){
             cylinder(d=baffle_hole, h=(opening_size/2)+2, $fn=80);
           }
           translate([0,0,shell_thickness]){
-            hole_cutter(4, 45, 89/2, 4, baffle_length);  
+            hole_cutter(4, 45, 82/2, 4, baffle_length);  
           }
         }
       }
@@ -66,8 +61,8 @@ module shellyRaw(){
 
     // Shell
     shell_scale = [actual_ratio, actual_ratio, actual_ratio]; // 30 mm opening, 72 mm full size
-    shell_min = 360*(startPi==undef?2:startPi); // default=2
-    shell_max = 360*(endPi==undef?5:endPi); // default=5
+    shell_min = 360*2; // default=2 Any less than 2 causes CGAL to shit the bed.
+    shell_max = 360*5; // default=5
     theta_step = 6;
     beta_step = 5;
     wall = false;
@@ -80,7 +75,6 @@ module shellyRaw(){
     pi = 3.1415926535898;
 
     echo (str("Actual ratio? ", actual_ratio));
-    echo (str("StartPi=", startPi, " EndPi=", endPi));
     echo (str("ShellMin=", shell_min, " ShellMax=", shell_max));
 
     // Fibonacci spiral, good approximation of the nautilus spiral
@@ -169,19 +163,21 @@ module shellyRaw(){
     }
 }
 
-
-
 module bolt(boltDim){
-    translate(boltDim + [0,0,0])
-    metricCapheadAndBolt(6, 40,recessNut=35, recessCap=30);
+    translate(boltDim + [0,0,0]) {
+        metricCapheadAndBolt(6, 40, recessNut = 35, recessCap = 30);
+    }
 }
 module boltStruct(boltDim, boltHeight){
-    color("green")
-    translate(boltDim + [0,0,boltHeight*-0.5])
-    cylinder(h=boltHeight,d=14, $fn=360);
+    color("green") {
+        translate(boltDim + [0, 0, boltHeight * - 0.5]) {
+            cylinder(h = boltHeight, d = 14, $fn = 30);
+        }
+    }
 }
 
 module processedShelly(){
+    
     difference(){
         union(){
             shelly();
@@ -199,19 +195,37 @@ module processedShelly(){
     }
 }
 
-translate([85,0,0]){
-    difference(){
-        processedShelly();
-        translate([0,0,-100])cube([500,500,200], center=true);
+/*
+translate([75,108,0]){
+    rotate([0,90,0]){
+        cylinder(h=52,d1=89,d2=67, center=true);
     }
-}
-translate([-85,0,0]){
-    rotate(180){
-        rotate([180,0,0]){
-            difference(){
-                processedShelly();
-                translate([0,0,100])cube([500,500,200], center=true);        
-            }
+}/**/
+/*
+color("orange"){
+    translate([50 ,108,0]){
+        cube([3,58,58], center=true);
+    }
+}/**/
+
+if(part==undef || part=="cap_side"){
+   translate([85,0,0]){
+        difference(){
+            processedShelly();
+            translate([0,0,-100])cube([500,500,200], center=true);
         }
     }
 }
+/**/
+if(part==undef || part=="nut_side"){
+    translate([-85,0,0]){
+        rotate(180){
+            rotate([180,0,0]){
+                difference(){
+                    processedShelly();
+                    translate([0,0,100])cube([500,500,200], center=true);        
+                }
+            }
+        }
+    }
+}/**/
