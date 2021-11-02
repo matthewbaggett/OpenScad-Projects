@@ -46,19 +46,19 @@ module shellyRaw(){
 
     actual_ratio = scaling * starting_ratio;
 
-    baffle_outer = opening_size+((2*shell_thickness)+2.1);
+    baffle_outer = opening_size+((2*shell_thickness)+2.1)-.48;
     baffle_length = ((2*opening_size)/5);
 
     // Baffle
     translate([full_size/2,0,0]){
       rotate([-90,0,0]){
         difference(){
-          cylinder(d=baffle_outer, h=baffle_length, $fn=80);
+          cylinder(d=baffle_outer, h=baffle_length, $fn=180);
           translate([0,0,-1]){
             cylinder(d=baffle_hole, h=(opening_size/2)+2, $fn=80);
           }
           translate([0,0,30]){
-            cylinder(d=90, h=5, $fn=80);
+            cylinder(d=89.5, h=5, $fn=80);
           }
           translate([0,0,shell_thickness]){
             hole_cutter(4, 45, 82/2, 4, baffle_length);  
@@ -79,8 +79,8 @@ module shellyRaw(){
     shell_scale = [actual_ratio, actual_ratio, actual_ratio]; // 30 mm opening, 72 mm full size
     shell_min = 360*2; // default=2 Any less than 2 causes CGAL to shit the bed.
     shell_max = 360*5; // default=5
-    theta_step = 6;
-    beta_step = 5;
+    theta_step = 6; // default 6
+    beta_step = 5; // default 5
     wall = false;
     wall_step = 2;
     wall_fill_percent = 85;

@@ -11,7 +11,7 @@ shelly_capside:
 		--rm \
 		-v $(PWD)/..:/src \
 			matthewbaggett/openscad \
-				-o /src/Shelly/shelly_cap_side.stl \
+				-o /src/Shelly/shelly_$(shell date +%Y%m%d_%H%M%S)_cap_side.stl \
 				-D 'part="cap_side"' \
 				/src/Shelly/shelly_mk4.scad
 
@@ -21,6 +21,6 @@ shelly_nutside:
 		--rm \
 		-v $(PWD)/..:/src \
 			matthewbaggett/openscad \
-				-o /src/Shelly/shelly_nut_side.stl \
+				-o /src/Shelly/shelly_$(shell date +%Y%m%d_%H%M%S)_nut_side.stl \
 				-D 'part="nut_side"' \
 				/src/Shelly/shelly_mk4.scad
