@@ -9,7 +9,7 @@ module holes(){
         color("green")
         mirrorCopy([1,0,0])
         mirrorCopy([0,1,0])
-        translate(holeSpacing/2 + [0,0,-26])
+        translate(holeSpacing/2 + [0,0,0])
         rotate([0,0,90])
         metricCapheadAndBolt(8,40+2,recessCap=15);
 
@@ -94,11 +94,11 @@ if($preview){
         translate([0,0,-50])
         cube([100,100,100], center=true);
     }
-/*
+
     translate([0,0,-5])
     difference(){
         complete();
         translate([0,0,50])
         cube([100,100,100], center=true);
-    }*/
+    }
 }
