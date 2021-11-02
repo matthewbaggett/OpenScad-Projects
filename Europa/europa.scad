@@ -1,4 +1,5 @@
 use <../Lib/mattlib.scad>;
+use <itx.scad>;
 
 spaceBetweenParts = 50;
 boltMSize = 6;
@@ -18,7 +19,22 @@ module europa_raw(){
         
     }
 }
+module power_supply_cutout(){
+    translate([-45,55,30.5]){
+        translate([(-51/2)+(24/2)+5,(126/2)+(20/2),0]){
+            cube([24,20,20], center=true);
+        }
+        cube([51,126,31], center=true);
+    }
+}
+//power_supply_cutout();
 
+module power_supply_brace(){
+    translate([-45,45,(42/2)+13]){
+        cube([70,20,41], center=true);
+    }
+}
+//power_supply_brace();
 module floppy_disk_support(){
     translate([(18.7/2)*-1,(30/2)+4.2,(52.5/2)+15])
         cube([18.7,30,52.5], center=true);
@@ -39,16 +55,20 @@ module floppy_disk_support_pruner(){
 }
 
 module europa(){
-    difference(){
-        union(){
-            europa_raw();
-            bolt_filler();
+    render(){
+        difference(){
+            union(){
+                europa_raw();
+                bolt_filler();
+                power_supply_brace();
+            }
+            bolt_holes();
+            floppy_disk_support_pruner();
+            power_supply_cutout();
         }
-        bolt_holes();
-        floppy_disk_support_pruner();
+        
+        floppy_disk_support();
     }
-    
-    floppy_disk_support();
 }
 
 module europa_facia(){
@@ -235,11 +255,18 @@ module bolt_filler(){
 }
 //part="facia";
 
+translate([0,-10,160]){
+    rotate([-40,0,0]){
+        itx();
+        itxBackplate();
+    }
+}
 
 if(!$preview) {
     components_output();
 }else{
-    #europa();
+
+#            europa();
     bolt_holes();
     color("green")bolt_filler();
     //floppy_disk_support();
