@@ -1,10 +1,16 @@
 use <../Lib/mattlib.scad>;
 
+include <../dotSCAD/src/shape_circle.scad>;
+include <../dotSCAD/src/golden_spiral.scad>;
+include <../dotSCAD/src/cross_sections.scad>;
+include <../dotSCAD/src/golden_spiral_extrude.scad>;
+
+
 boltLengthMM = 40;
-bolt1 = [25,95,0];
-bolt2 = [79,0,0];
-bolt3 = [0,-62,0];
-bolt4 = [-50,0,0];
+bolt1 = [25,95,1];
+bolt2 = [79,0,1];
+bolt3 = [0,-62,1];
+bolt4 = [-50,0,1];
 support1Height = 87;
 support2Height = 72;
 support3Height = 56;
@@ -224,10 +230,36 @@ color("orange"){
     }
 }/**/
 
+module mattShell(){
+    $fn = 180;
+    finalOuterMM = 93;
+    finalInnerMM=80;
+
+    scale = 6;
+    shape_pts = concat(
+        shape_circle(radius = (finalOuterMM/2)/scale),
+        shape_circle(radius = (finalInnerMM/2)/scale)
+    );
+
+
+    golden_spiral_extrude(
+        shape_pts,
+        from = 4,
+        to = 12,
+        point_distance = 5,
+        scale = scale,
+        triangles = "HOLLOW"
+    ); 
+
+}
+
+
+
 if($preview){
     //#cylinder(h=100,d=250, center=true, $fn=60);
     //translate([-10,-30,0])
         processedShelly();
+        color("orange")mattShell();
 }else{
     if(part==undef || part=="cap_side"){
        translate([85,0,0]){

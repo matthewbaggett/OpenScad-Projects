@@ -15,8 +15,8 @@ module metricBoltHex(mSize, structural=false, recessNut=0, chamfer=false){
     
     if(recessNut > 0){
         color(boltClearanceColour)
-        translate([0,0,(recessNut/2)*-1])
-        cylinder(d=hexDiameter,h=recessNut, $fn=6, center=true);
+        translate([0,0,(recessNut/2)*-1+0.1])
+        cylinder(d=hexDiameter,h=recessNut+0.1, $fn=6, center=true);
     }
     if(chamfer){
         chamferHeight = mSize*1.5*0.595;
