@@ -149,7 +149,7 @@ module panels(){
     panel(0+(30/2),cabinetDims.z-0+(30/2));
 }
 
-printers();
+//printers();
 frame();
 decks();
 panels();

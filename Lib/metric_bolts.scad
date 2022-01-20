@@ -3,6 +3,7 @@ printingKerfMM = 0.6;
 circleFacets = 60;
 boltColour = "LightSkyBlue";
 boltClearanceColour = "LightSteelBlue";
+boltClearanceTransparency = 0.3;
 
 module metricBoltHex(mSize, structural=false, recessNut=0, chamfer=false){
     // Hex diameter = mSize * 1.8, (or 2.0 if structural
@@ -14,13 +15,13 @@ module metricBoltHex(mSize, structural=false, recessNut=0, chamfer=false){
     cylinder(d=hexDiameter,h=mSize * 0.7, $fn=6, center=true);
     
     if(recessNut > 0){
-        color(boltClearanceColour)
+        color(boltClearanceColour, boltClearanceTransparency)
         translate([0,0,(recessNut/2)*-1+0.1])
         cylinder(d=hexDiameter,h=recessNut+0.1, $fn=6, center=true);
     }
     if(chamfer){
         chamferHeight = mSize*1.5*0.595;
-        color(boltClearanceColour)
+        color(boltClearanceColour, boltClearanceTransparency)
         translate([0,0,(mSize * 0.7)+(chamferHeight/2)])
         cylinder(d1=hexDiameter,d2=0,h=chamferHeight, center=true, $fn=6);
     }
@@ -36,12 +37,12 @@ module metricSocketCap(mSize, length, structural=false,recessCap=0, chamfer=fals
             cylinder(d=capSize,h=mSize*1.25, center=true, $fn=circleFacets);
     //echo (str("cap size is ", capSize));
     if(recessCap > 0){
-        color(boltClearanceColour)
+        color(boltClearanceColour, boltClearanceTransparency)
         translate([0,0,(length + ((recessCap/2)+(mSize*1.25)))])
         cylinder(d=capSize,h=recessCap, center=true, $fn=circleFacets);
     }
     if(chamfer){
-        color(boltClearanceColour)
+        color(boltClearanceColour, boltClearanceTransparency)
         translate([0,0,(length-((mSize*1.5*0.595)/2))])
         cylinder(d2=capSize,d1=0,h=mSize*1.5*0.595, center=true, $fn=circleFacets);
     }

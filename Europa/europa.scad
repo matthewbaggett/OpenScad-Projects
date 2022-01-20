@@ -115,6 +115,17 @@ module europa_body_top(){
     }
 }
 
+module itx_parts(){
+    translate([0,-10,160]){
+        rotate([-40,0,0]){
+            if($preview){
+                itx();
+            }
+            itxBackplate();
+        }
+    }
+}
+
 module components_output(){
     if(part==undef || part=="facia")
         europa_facia();
@@ -124,6 +135,8 @@ module components_output(){
         europa_body_middle();
     if(part==undef || part=="bottom")
         europa_body_bottom();
+    if(part==undef || part=="itx")
+        itx_parts();
 }
 
 module bolt_holes(){
@@ -255,18 +268,13 @@ module bolt_filler(){
 }
 //part="facia";
 
-translate([0,-10,160]){
-    rotate([-40,0,0]){
-        itx();
-        itxBackplate();
-    }
-}
 
 if(!$preview) {
     components_output();
 }else{
 
 #            europa();
+    itx_parts();
     bolt_holes();
     color("green")bolt_filler();
     //floppy_disk_support();

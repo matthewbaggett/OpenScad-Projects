@@ -3,7 +3,7 @@
 all: build
 
 build:
-	echo -n "facia top middle bottom" | \
+	echo -n "facia top middle bottom itx" | \
 		xargs -d ' ' --no-run-if-empty -n1 -P2 -I {} \
 			docker \
 				run \

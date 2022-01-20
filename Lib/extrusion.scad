@@ -6,13 +6,20 @@ module doubleExtrusion(width,length, center=false){
         translate([0,(width - extraWallWidth)/2,length/2])
         cube([center?0:width/2,extraWallWidth,length], center=true);
     }
+    
     translate([(width/2),0,0])
     children();
     translate([(width/2)*-1,0,0])
     children();
+    color("grey",0.1)hull(){
+        translate([(width/2),0,0])
+        children();
+        translate([(width/2)*-1,0,0])
+        children();
+    }
 }
 
-module extrusion(length=10, outer=40, tSlot=8, gusset=4.5, bore=7, center=false){
+module extrusion_sub(length=10, outer=40, tSlot=8, gusset=4.5, bore=7, center=false){
     translate([0,0,center?0:length/2]){
         difference(){
             color("orange")
@@ -54,6 +61,11 @@ module extrusion(length=10, outer=40, tSlot=8, gusset=4.5, bore=7, center=false)
             }
         }
     }
+}
+module extrusion(length=10, outer=40, tSlot=8, gusset=4.5, bore=7, center=false){
+    color("grey",0.1)hull()extrusion_sub(length=length, outer=outer, tSlot=tSlot, gusset=gusset, bore=bore, center=center);
+    extrusion_sub(length=length, outer=outer, tSlot=tSlot, gusset=gusset, bore=bore, center=center);
+    echo(str("BOM: Extrusion(",outer,"mm) length=",length,"mm"));
 }
 
 module extrusion80x40(length, center=false){
