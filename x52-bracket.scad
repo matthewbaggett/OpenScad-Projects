@@ -66,7 +66,9 @@ module holes(){
     mirrorCopy(){
         translate([0,170/2+baseThick/2+baseThick*2,downwardsOffset/2]){
             translate([70,0,0]){
-                metricCapheadAndBolt(6, 40, recessCap = 50, recessNut=50, chamfer = true);
+                rotate([0,0,90]){
+                    metricCapheadAndBolt(6, 40, recessCap = 50, recessNut=50, chamfer = true);
+                }
             }
         }
     }
