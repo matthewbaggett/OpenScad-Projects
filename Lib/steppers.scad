@@ -1,6 +1,7 @@
 /**
  * Implementation of a model of a 28BYJ-48 type cheapo stepper motor
  */
+use <mirrorcopy.scad>;
 module stepper28BYJ48(){
     color("light grey"){
         translate([0,-8,0]){
@@ -57,3 +58,56 @@ module stepper28BYJ48_cutouts(){
     }
 }
 
+module nemaCutout(shaftClearance, shaftGirth, shaftLength, frameSize, holeSpacing,holeDiameter=3,       nemaSlotSlackMM=0, shaft=false){
+    translate([0,0,frameSize/-2]){
+        hull(){
+            mirrorCopy([0,1,0]){
+                translate([0,nemaSlotSlackMM/2]){
+                    cube([frameSize*1.01,frameSize*1.01,frameSize], center=true);
+                }
+            }
+        }
+    }
+    if(!shaft){
+        translate([0,0,10/2]){
+            mirrorCopy([1,0,0]){
+                mirrorCopy([0,1,0]){
+                    translate([holeSpacing/2,holeSpacing/2,0]){
+                        hull(){
+                            mirrorCopy([0,1,0]){
+                                translate([0,nemaSlotSlackMM/2,0]){
+                                    cylinder(d=holeDiameter*1.1,h=30,center=true);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    if(!shaft){
+        translate([0,0,-0.5]){
+            cylinder(d=shaftClearance*1.03,h=shaftLength+1);
+        }
+    }else{
+        difference(){
+            cylinder(d=shaftGirth*1.03,h=shaftLength*2, $fn=360);
+            translate([frameSize/-2,(shaftGirth/2)-(shaftGirth)*0.15,shaftLength*0.3+0.01]){
+                cube([frameSize,frameSize/2,shaftLength*0.70]);
+                translate([0,0,shaftLength*0.70-1])cube([frameSize,frameSize/2,shaftLength+1]);
+            }
+        }
+    }
+}
+
+module nema14_cutout(){
+    nemaCutout(22,5,24,35,26,3,2, shaft);
+}
+
+module nema17_cutout(shaft=false){
+    
+    nemaCutout(22,5,24,42.3,31,3,2, shaft);
+}
+
+nema17_cutout(true);

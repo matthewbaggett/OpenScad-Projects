@@ -46,7 +46,7 @@ module plastic(){
     // dowels
     translate([96/2,136/2,baseThick/2+dowelHeight/2])cylinder(d=10, h=dowelHeight, center=true);
     translate([96/-2,136/2,baseThick/2+dowelHeight/2])cylinder(d=10, h=dowelHeight, center=true);
-    translate([96/-2,136/-2,baseThick/2+dowelHeight/2])cylinder(d=10, h=dowelHeight, center=true);
+    translate([96/2,136/-2,baseThick/2+dowelHeight/2])cylinder(d=10, h=dowelHeight, center=true);
 }
 module holes(){
     
@@ -91,6 +91,7 @@ module holes(){
                 cylinder(h=baseThick+2, d=10);
         }
     }
+    /**/
     
 }
 module cradle(){

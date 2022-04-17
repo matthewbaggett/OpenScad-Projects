@@ -66,3 +66,15 @@ anycubic_castor:
 							-o /src/anycubic_castors_{}.stl \
 							-D 'part="{}"' \
 							/src/anycubic_castors.scad
+tumbler:
+	echo -n "front back side left_shaft right_shaft center_carrier" | \
+		xargs -d ' ' --no-run-if-empty -n1 -P2 -I {} \
+			docker \
+				run \
+					--rm \
+					-v $(PWD)/:/src \
+					bbassett/openscad \
+						openscad \
+							-o /src/tumbler_{}.stl \
+							-D 'part="{}"' \
+							/src/tumbler.scad
