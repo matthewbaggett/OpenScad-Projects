@@ -9,3 +9,4 @@ include <../Lib/corner_radiuser.scad>;
 include <../Lib/gears.scad>;
 include <../Lib/prism.scad>;
 include <../Lib/fillet_cylinder.scad>;
+include <../Lib/o-ring.scad>;
