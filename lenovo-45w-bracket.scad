@@ -1,19 +1,37 @@
 use <Lib/mattlib.scad>
 $fn=$preview?30:360;
 lenovo_psu=[29.5,108,46.1];
+lenovo_psu_output_tail_clearance = 15;
+lenovo_psu_input_tail_clearance = 60;
 
 module lenovo_psu_body(){
-    color("grey",0.3)
-    rotate([0,90,0])
-        difference(){
-            cube(lenovo_psu, center=true);
-            translate([0,lenovo_psu.y/2-1,0])
-                rotate([90,0,180])
-                    scale([0.3,0.3,1])
-                        linear_extrude(1.1)
-                            text("Lenovo PSU Front",halign="center", valign="center");
-    }
+    rotate([0,90,0]){
+        color("grey",1)
+        
+            difference(){
+                cube(lenovo_psu, center=true);
+                translate([0,lenovo_psu.y/2-1,0])
+                    rotate([90,90,180])
+                        scale([0.3,0.3,1])
+                            linear_extrude(1.1)
+                                text("Lenovo PSU Output",halign="center", valign="center");
+                translate([0,lenovo_psu.y/-2-1,0])
+                    rotate([90,90,180])
+                        mirror([1,0,0])
+                            scale([0.3,0.3,1])
+                                linear_extrude(1.1)
+                                    text("Lenovo PSU Input",halign="center", valign="center");
+                
+            }
+            
+            // Tail for input cable
+            color("grey",0.3)translate([0,(lenovo_psu.y+lenovo_psu_input_tail_clearance)/-2,0])cube([lenovo_psu.x,lenovo_psu_input_tail_clearance,lenovo_psu.z], center=true);
+            
+            // Tail for output cable
+            color("grey",0.3)translate([0,(lenovo_psu.y+lenovo_psu_output_tail_clearance)/2,0])cube([lenovo_psu.x,lenovo_psu_output_tail_clearance,lenovo_psu.z], center=true);
+        }
 }
+
 
 module bracket(){
         
@@ -88,3 +106,4 @@ if($preview){
     }
     
 }
+/**/
