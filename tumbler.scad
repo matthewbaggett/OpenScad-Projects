@@ -1,6 +1,13 @@
+arrangeForPrint = "no"; // [yes:Yes, no:No]
+// Part to print
+part = "all"; // [all, left_shaft, right_shaft, center_carrier, front, side, back, oring_fit_test]
+mBoltSize = 6;
+mod = 5;
+bottomRollerOffset = 25+50+5;
+rollerGap = 70-13;
+
 use <Lib/mattlib.scad>;
 $fn=160;
-mBoltSize = 6;
 
 module skateboard_bearing(){
     hull()bearing_608();
@@ -92,11 +99,20 @@ module gear(mod=5){
 
 }
     
-mod = 5;
-bottomRollerOffset = 25+50+5;
-rollerGap = 70;
+
+
+module oring(){
+    rotate_extrude(angle=360)translate([(35)/2,0])circle(d=2.5);
+    //difference(){
+    //    cylinder(h=2.5,d=35+1, center=true);
+    //    cylinder(h=2.5+0.1,d=33, center=true);
+    //}
+}
+
 
 module shaft_features(){
+    difference(){
+        union(){
             translate([0,0,100])cylinder(h=200, d=8, center=true);
             translate([0,0,100])cylinder(h=200-10-(3*2), d=30, center=true);
             translate([0,0,bottomRollerOffset+20])cylinder(h=30, d1=35,d2=0, center=true);
@@ -106,7 +122,13 @@ module shaft_features(){
             translate([0,0,bottomRollerOffset+rollerGap])cylinder(h=10, d=35, center=true);
             translate([0,0,bottomRollerOffset+rollerGap-20])cylinder(h=30, d2=35,d1=0, center=true);
             translate([0,0,5+4])rotate([0,0,(360/(50/mod)/2)])gear(mod);
-    
+        }
+        // O-rings
+        translate([0,0,bottomRollerOffset])
+            #o_ring(id=32,girth=2.5);
+        translate([0,0,bottomRollerOffset+rollerGap])
+            #o_ring(id=32,girth=2.5);
+    }
 }
     
 module left_shaft(){
@@ -124,7 +146,9 @@ module center_carrier(){
         union(){
             translate([0,0,11]){
                 cylinder(h=10, d=20, center=true);        
-            }
+            }    // O-rings
+    translate([0,0,bottomRollerOffset])#oring();
+
             //mirror(){
             mirror([1,0,0]){
                 translate([0,0,5+4]){
@@ -145,7 +169,7 @@ module shafts(){
 
 /**/
 
-if($preview){
+if(arrangeForPrint == "no"){
     //color("black",0.1){
     //    translate([-100,0,35])rotate([90,0,90])nema17_cutout();
     //}
@@ -153,20 +177,20 @@ if($preview){
     frame();
 }else{
     translate([130,0,0]){
-        if (part == undef || part == "back") {
+        if (part == "all" || part == "back") {
             translate([70,0,-95])rotate([180,90,0])difference(){
                 frame();
                 translate([15,0,30])cube([220,220,80], center=true);
             }
         }
-        if (part == undef || part == "front") {
+        if (part == "all" || part == "front") {
             translate([0,0,-95])rotate([0,-90,0])difference(){
                 frame();
                 translate([-15,0,30])cube([220,220,80], center=true);
             }
         }
     }
-    if (part == undef || part == "side") {
+    if (part == "all" || part == "side") {
         translate([0,0,-85])rotate([90,0,90])difference(){
             frame();
             translate([0,-25,30])cube([220+1,220,80], center=true);
@@ -174,13 +198,24 @@ if($preview){
         }
     }
     
-    if (part == undef || part == "left_shaft") {
+    if (part == "all" || part == "left_shaft") {
         translate([-60,30,0])left_shaft();
     }
-    if (part == undef || part == "right_shaft") {
+    if (part == "all" || part == "right_shaft") {
         translate([-60,-30,0])right_shaft();
     }
-    if (part == undef || part == "center_carrier") {
+    if (part == "all" || part == "center_carrier") {
         translate([-60,0,0])center_carrier();
+    }
+    if(part == "oring_fit_test"){
+        
+        translate([-60,30,0]){
+            difference(){
+                left_shaft();
+                #translate([0,50,80])cylinder(h=50,d=20, center=true);
+                translate([0,50,-25+2])cube([90,90,200], center=true);
+                translate([0,50,-25+200+10-2])cube([90,90,200], center=true);
+            }
+        }
     }
 }/**/
