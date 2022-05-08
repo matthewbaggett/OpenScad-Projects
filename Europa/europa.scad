@@ -1,13 +1,28 @@
+// Whether to output in render mode for screen, or as printable sub assemblies
+outputMode="render"; // [render:Render, print:Assemblies]
+// Parts to render
+part="all"; // [all, facia, top, middle, bottom, itx]
+// Gap between printable parts (mm)
+spaceBetweenParts = 50;
+// What size bolt heads to use (e.g: M6 = 6)
+boltMSize = 6;
+// What common bolt length (mm) (including the head)
+boltLengthMM = 40;
+
+// Below prevents offering these options as customizable variables.
+module lol(){}
+$fn=30;
+
 use <../Lib/mattlib.scad>;
 use <itx.scad>;
+use <usb_connector.scad>;
 
-spaceBetweenParts = 50;
-boltMSize = 6;
-boltLengthMM = 40;
-$fn=64;
+
+
 
 module europa_raw(){
     color("grey")
+    render()
     difference(){
         translate([1.245,73.638,0])
             rotate(180)
@@ -27,7 +42,7 @@ module power_supply_cutout(){
         cube([51,126,31], center=true);
     }
 }
-//power_supply_cutout();
+//power_supply_cutout();5
 
 module power_supply_brace(){
     translate([-45,45,(42/2)+13]){
@@ -74,9 +89,7 @@ module europa(){
 module europa_facia(){
     difference(){
         europa();
-        rotate([-5,0,0])
-            translate([0,150-116.873,190])
-                cube([300,250,400], center=true);
+        rotate([-5,0,0])translate([0,150-116.873,190])cube([300,250,400], center=true);
     }
 }
 
@@ -126,44 +139,33 @@ module itx_parts(){
     }
 }
 
-module components_output(){
-    if(part==undef || part=="facia")
-        europa_facia();
-    if(part==undef || part=="top")
-        europa_body_top();
-    if(part==undef || part=="middle")
-        europa_body_middle();
-    if(part==undef || part=="bottom")
-        europa_body_bottom();
-    if(part==undef || part=="itx")
-        itx_parts();
-}
 
 module bolt_holes(){
     // Body Bolts
     mirrorCopy([1,0,0]){
         
-    // Top Face Bolt
-    translate([-40,-62,280]){
-        rotate([-5,0,0]){
-            rotate([-90,90,0]){
-                metricCapheadAndBolt(boltMSize, boltLengthMM, recessNut=2, recessCap=50, chamfer=false);
-                translate([5+2.5,0,-22.65])cube([10,10,6.25], center=true);
-            }
-        }
-    }
-    
-    // Bottom Face Bolt
-    mirrorCopy([1,0,0]){
-        translate([-75,-87,50]){
+        // Top Face Bolt
+        translate([-40,-62,280]){
             rotate([-5,0,0]){
                 rotate([-90,90,0]){
-                    metricCapheadAndBolt(boltMSize, 20, recessNut=2, recessCap=20, chamfer=false);
-                    translate([-5,0,-7.6-5])cube([10,12,6.25], center=true);
+                    metricCapheadAndBolt(boltMSize, boltLengthMM, recessNut=2, recessCap=50, chamfer=false);
+                    translate([5+2.5,0,-22.65])cube([10,10,6.25], center=true);
                 }
             }
         }
-    }
+        
+        // Bottom Face Bolt
+        mirrorCopy([1,0,0]){
+            translate([-75,-87,50]){
+                rotate([-5,0,0]){
+                    rotate([-90,90,0]){
+                        metricCapheadAndBolt(boltMSize, 20, recessNut=2, recessCap=20, chamfer=false);
+                        translate([-5,0,-7.6-5])cube([10,12,6.25], center=true);
+                    }
+                }
+            }
+        }
+        
         // Rear Bolts
         translate([102,112,100]){
             // Lower Rear bolt holes
@@ -269,11 +271,20 @@ module bolt_filler(){
 //part="facia";
 
 
-if(!$preview) {
-    components_output();
+if(outputMode == "print") {
+    if(part=="all" || part=="facia")
+        europa_facia();
+    if(part=="all" || part=="top")
+        europa_body_top();
+    if(part=="all" || part=="middle")
+        europa_body_middle();
+    if(part=="all" || part=="bottom")
+        europa_body_bottom();
+    if(part=="all" || part=="itx")
+        itx_parts();
 }else{
 
-#            europa();
+    color("grey", 0.3)europa();
     itx_parts();
     bolt_holes();
     color("green")bolt_filler();
