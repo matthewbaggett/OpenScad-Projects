@@ -1,0 +1,41 @@
+name: Ikea Power Bar
+
+on:
+  push:
+    paths:
+      - 'ikea_power_bar_bracket.scad'
+      - 'Lib'
+  workflow_dispatch:
+
+jobs:
+  build-ikea-power-bar:
+    name: Compile STL
+    strategy:
+      fail-fast: false
+      matrix:
+        fixing:
+          - m5
+          - screws
+        cable:
+          - cable
+          - no-cable
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v2
+      - name: "Compile ${{ matrix.fixing }} / ${{ matrix.cable }}"
+        uses: addnab/docker-run-action@v3
+        with:
+          image: bbassett/openscad
+          options: -v ${{ github.workspace }}:/src
+          run: |
+            openscad \
+              -o /src/ikea_power_bar_bracket_${{ matrix.fixing }}_${{ matrix.cable }}.stl \
+              -D 'part="${{ matrix.fixing }}-${{ matrix.cable }}"' \
+              /src/ikea_power_bar_bracket.scad
+      - name: "Store ${{ matrix.component }} artifact."
+        uses: actions/upload-artifact@v3
+        if: ${{ !env.ACT }}
+        with:
+          name: Ikea Power Bar Bracket (${{ matrix.fixing }}/${{ matrix.cable }})
+          path: ./ikea_power_bar_bracket_${{ matrix.fixing }}_${{ matrix.cable }}.stl
