@@ -1,4 +1,4 @@
-name: Build Europa
+name: Europa
 
 on:
   push:
@@ -6,9 +6,9 @@ on:
 
 jobs:
   europa:
-    name: Build Europa Components
+    name: Compile STL
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         component:
           - facia
@@ -16,21 +16,26 @@ jobs:
           - top_rear
           - bottom_front
           - bottom_rear
-          #- screen_retainer_bracket
+          - screen_retainer_bracket
           - duct
     runs-on: ubuntu-latest
     steps:
+      - name: Git Checkout
+        uses: actions/checkout@v2
       - name: "Compile ${{ matrix.component }}"
-        run: |
-          docker run --rm \
-            -v $(pwd)/:/src \
-            matthewbaggett/openscad \
-              -o ${{ matrix.component }}.stl \
+        uses: addnab/docker-run-action@v3
+        with:
+          image: matthewbaggett/openscad
+          options: -v ${{ github.workspace }}:/src
+          run: |
+            openscad \
+              -o /src/Europa/${{ matrix.component }}.stl \
               -D 'renderPrintablePart="${{ matrix.component }}"' \
               -D 'rotateForPrint="yes"' \
-                  /src/Europa/rebuilt_europa.scad
+              /src/Europa/rebuilt_europa.scad
       - name: "Store ${{ matrix.component }} artifact."
         uses: actions/upload-artifact@v3
+        if: ${{ !env.ACT }}
         with:
-          name: code-coverage-report
-          path: ${{ matrix.component }}.stl
+          name: Europa - ${{ matrix.component }}
+          path: ./Europa/${{ matrix.component }}.stl
