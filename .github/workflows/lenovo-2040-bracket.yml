@@ -14,12 +14,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        side:
-          - left
-          - right
         component:
           - m93p_bracket
           - lenovo-45w-bracket
+        side:
+          - left
+          - right
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
@@ -38,5 +38,5 @@ jobs:
         uses: actions/upload-artifact@v3
         if: ${{ !env.ACT }}
         with:
-          name: Lenovo - ${{ matrix.component }}/${{ matrix.side }}
+          name: Lenovo - ${{ matrix.component }} (${{ matrix.side }})
           path: ./${{ matrix.component }}_${{ matrix.side }}.stl
