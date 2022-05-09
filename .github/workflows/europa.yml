@@ -1,0 +1,36 @@
+name: Build Europa
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  europa:
+    name: Build Europa Components
+    strategy:
+      fail-fast: true
+      matrix:
+        component:
+          - facia
+          - top_front
+          - top_rear
+          - bottom_front
+          - bottom_rear
+          #- screen_retainer_bracket
+          - duct
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Compile ${{ matrix.component }}"
+        run: |
+          docker run --rm \
+            -v $(pwd)/:/src \
+            matthewbaggett/openscad \
+              -o /src/Europa/${{ matrix.component }}.stl \
+              -D 'renderPrintablePart="${{ matrix.component }}"' \
+              -D 'rotateForPrint="yes"' \
+                  /src/Europa/rebuilt_europa.scad
+      - name: "Store ${{ matrix.component }} artifact."
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage-report
+          path: /src/Europa/${{ matrix.component }}.stl
