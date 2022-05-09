@@ -21,11 +21,12 @@ module usbHeaderConnectorCutout(){
         translate([0,0,5])cube([22,12,10], center=true);
         
     }
-    translate([0,0,-5])cube([15,7,10+0.01], center=true);
+    translate([0,0,-5])cube([15,7,10+0.1], center=true);
 
 }
 
+usbHeaderConnectorCutout();
 difference(){
-    hull()mirrorCopy()translate([15,0,0])cylinder(h=10,d=15, center=true);
+    #hull()mirrorCopy()translate([15,0,0.5])cylinder(h=10,d=15, center=true);
     usbHeaderConnectorCutout();
 }

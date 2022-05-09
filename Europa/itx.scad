@@ -1,4 +1,4 @@
-include <../Lib/mirrorcopy.scad>;
+use <../Lib/mattlib.scad>;
 
 module itx(){
     color("lightgreen",0.5){
@@ -41,6 +41,69 @@ module itx(){
     }
 }
 
+module itxHoles(){
+    translate([-170/2,170/2]){
+        // Hole C
+        translate([6.35,-10.16,0]){
+            cylinder(h=20, d=3.96, $fn=60, center=true);
+        }
+        // Hole F
+        translate([6.35+157.48,-10.16-22.86,0]){
+            cylinder(h=20, d=3.96, $fn=60, center=true);
+        }
+        // Hole H
+        translate([6.35,-10.16-154.94,0]){
+            cylinder(h=20, d=3.96, $fn=60, center=true);
+        }
+        // Hole J
+        translate([6.35+157.48,-10.16-154.94,0]){
+            cylinder(h=20, d=3.96, $fn=60, center=true);
+        }
+    }
+}
+
+module itxM3Bolts(){
+    translate([-170/2,170/2]){
+        // Hole C
+        translate([6.35,-10.16,0]){
+            rotate([0,180,0])metricCapheadAndBolt(3, 20, recessNut=0, recessCap=10, chamfer=false);
+        }
+        // Hole F
+        translate([6.35+157.48,-10.16-22.86,0]){
+            rotate([0,180,0])metricCapheadAndBolt(3, 20, recessNut=0, recessCap=10, chamfer=false);
+        }
+        // Hole H
+        translate([6.35,-10.16-154.94,0]){
+            rotate([0,180,0])metricCapheadAndBolt(3, 20, recessNut=0, recessCap=10, chamfer=false);
+        }
+        // Hole J
+        translate([6.35+157.48,-10.16-154.94,0]){
+            rotate([0,180,0])metricCapheadAndBolt(3, 20, recessNut=0, recessCap=10, chamfer=false);
+        }
+    }
+}
+
+module itxStandoffs(){
+    translate([-170/2,170/2,4]){
+        // Hole C
+        translate([6.35,-10.16,0]){
+            cylinder(h=3, d=10, $fn=60, center=true);
+        }
+        // Hole F
+        translate([6.35+157.48,-10.16-22.86,0]){
+            cylinder(h=3, d=10, $fn=60, center=true);
+        }
+        // Hole H
+        translate([6.35,-10.16-154.94,0]){
+            cylinder(h=3, d=10, $fn=60, center=true);
+        }
+        // Hole J
+        translate([6.35+157.48,-10.16-154.94,0]){
+            cylinder(h=3, d=10, $fn=60, center=true);
+        }
+    }
+}
+
 module itxBackplate(){
     difference(){
         union(){
@@ -54,45 +117,12 @@ module itxBackplate(){
                 }
                 translate([69,50,0])cube([30,20,5], center=true);
             }
-            translate([-170/2,170/2,4]){
-                // Hole C
-                translate([6.35,-10.16,0]){
-                    cylinder(h=3, d=10, $fn=60, center=true);
-                }
-                // Hole F
-                translate([6.35+157.48,-10.16-22.86,0]){
-                    cylinder(h=3, d=10, $fn=60, center=true);
-                }
-                // Hole H
-                translate([6.35,-10.16-154.94,0]){
-                    cylinder(h=3, d=10, $fn=60, center=true);
-                }
-                // Hole J
-                translate([6.35+157.48,-10.16-154.94,0]){
-                    cylinder(h=3, d=10, $fn=60, center=true);
-                }
-            }
+            itxStandoffs();
         }
         
-        translate([-170/2,170/2]){
-            // Hole C
-            translate([6.35,-10.16,0]){
-                cylinder(h=20, d=3.96, $fn=60, center=true);
-            }
-            // Hole F
-            translate([6.35+157.48,-10.16-22.86,0]){
-                cylinder(h=20, d=3.96, $fn=60, center=true);
-            }
-            // Hole H
-            translate([6.35,-10.16-154.94,0]){
-                cylinder(h=20, d=3.96, $fn=60, center=true);
-            }
-            // Hole J
-            translate([6.35+157.48,-10.16-154.94,0]){
-                cylinder(h=20, d=3.96, $fn=60, center=true);
-            }
-        }
+        itxHoles();
         
+        // Decorative plastic savers
         mirrorCopy([1,-1,0]){
             mirrorCopy([1,1,0]){
                 hull(){
@@ -105,5 +135,8 @@ module itxBackplate(){
     }
 }
 
-itx();
-itxBackplate();
+//itx();
+itxHoles();
+itxM3Bolts();
+    
+//itxBackplate();
