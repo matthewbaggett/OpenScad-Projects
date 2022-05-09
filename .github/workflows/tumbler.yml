@@ -33,6 +33,7 @@ jobs:
             openscad \
               -o /src/tumbler_${{ matrix.component }}.stl \
               -D 'part="${{ matrix.component }}"' \
+              -D 'arrangeForPrint="yes"' \
               /src/tumbler.scad
       - name: "Store ${{ matrix.component }} artifact."
         uses: actions/upload-artifact@v3
