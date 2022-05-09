@@ -1,26 +1,25 @@
-name: Europa
+name: Rock tumbler
 
 on:
   push:
     paths:
-      - 'Europa'
+      - 'tumbler.scad'
       - 'Lib'
   workflow_dispatch:
 
 jobs:
-  europa:
+  build-tumbler:
     name: Compile STL
     strategy:
       fail-fast: false
       matrix:
         component:
-          - facia
-          - top_front
-          - top_rear
-          - bottom_front
-          - bottom_rear
-          - screen_retainer_bracket
-          - duct
+          - front
+          - back
+          - side
+          - left_shaft
+          - right_shaft
+          - center_carrier
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
@@ -32,13 +31,12 @@ jobs:
           options: -v ${{ github.workspace }}:/src
           run: |
             openscad \
-              -o /src/Europa/${{ matrix.component }}.stl \
-              -D 'renderPrintablePart="${{ matrix.component }}"' \
-              -D 'rotateForPrint="yes"' \
-              /src/Europa/rebuilt_europa.scad
+              -o /src/tumbler_${{ matrix.component }}.stl \
+              -D 'part="${{ matrix.component }}"' \
+              /src/tumbler.scad
       - name: "Store ${{ matrix.component }} artifact."
         uses: actions/upload-artifact@v3
         if: ${{ !env.ACT }}
         with:
-          name: Europa - ${{ matrix.component }}
-          path: ./Europa/${{ matrix.component }}.stl
+          name: Tumbler - ${{ matrix.component }}
+          path: ./tumbler_${{ matrix.component }}.stl

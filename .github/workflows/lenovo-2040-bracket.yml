@@ -1,0 +1,42 @@
+name: Lenovo 2040 extrusion bracket
+
+on:
+  push:
+    paths:
+      - 'lenovo-45w-bracket.scad'
+      - 'm93p_bracket.scad'
+      - 'Lib'
+  workflow_dispatch:
+
+jobs:
+  build-lenovo-brackets:
+    name: Compile STL
+    strategy:
+      fail-fast: false
+      matrix:
+        side:
+          - left
+          - right
+        component:
+          - m93p_bracket
+          - lenovo-45w-bracket
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v2
+      - name: "Compile ${{ matrix.component }}/${{ matrix.side }}"
+        uses: addnab/docker-run-action@v3
+        with:
+          image: bbassett/openscad
+          options: -v ${{ github.workspace }}:/src
+          run: |
+            openscad \
+              -o /src/${{ matrix.component }}_${{ matrix.side }}.stl \
+              -D 'part="${{ matrix.side }}"' \
+              /src/${{ matrix.component }}.scad
+      - name: "Store ${{ matrix.component }}/${{ matrix.side }} artifact."
+        uses: actions/upload-artifact@v3
+        if: ${{ !env.ACT }}
+        with:
+          name: Lenovo - ${{ matrix.component }}/${{ matrix.side }}
+          path: ./${{ matrix.component }}_${{ matrix.side }}.stl
