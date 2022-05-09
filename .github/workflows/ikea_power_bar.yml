@@ -18,7 +18,7 @@ jobs:
           - screws
         cable:
           - cable
-          - no-cable
+          - nocable
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
@@ -37,5 +37,5 @@ jobs:
         uses: actions/upload-artifact@v3
         if: ${{ !env.ACT }}
         with:
-          name: Ikea Power Bar Bracket (${{ matrix.fixing }}/${{ matrix.cable }})
+          name: Ikea Power Bar Bracket (${{ matrix.fixing }} ${{ matrix.cable }})
           path: ./ikea_power_bar_bracket_${{ matrix.fixing }}_${{ matrix.cable }}.stl
