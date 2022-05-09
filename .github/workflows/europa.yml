@@ -25,7 +25,7 @@ jobs:
           docker run --rm \
             -v $(pwd)/:/src \
             matthewbaggett/openscad \
-              -o /src/Europa/${{ matrix.component }}.stl \
+              -o ${{ matrix.component }}.stl \
               -D 'renderPrintablePart="${{ matrix.component }}"' \
               -D 'rotateForPrint="yes"' \
                   /src/Europa/rebuilt_europa.scad
@@ -33,4 +33,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: code-coverage-report
-          path: /src/Europa/${{ matrix.component }}.stl
+          path: ${{ matrix.component }}.stl
