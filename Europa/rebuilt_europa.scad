@@ -19,16 +19,30 @@ featureTopVents="yes"; // [yes:Yes, no:No]
 featureFeetRecess="yes"; // [yes:Yes, no:No]
 // Feature: Sticker recess on rear
 featureRearStickerRecess="yes"; // [yes:Yes, no:No]
+// Feature: Front USB Ports
+featureFrontUSB=1; // [0:2]
+// Feature: Internal floppy drive
+featureFloppyDrive="yes"; //[yes:"Haha yes floppy go brr", no:"No, I am boring"]
+// Feature: Internal 2.5" drive
+featureSataDriveHoles="no"; //[yes:"Add 2.5 inch drive mount", no]
+// Feature: 8mm front panel switch under the chin
+feature8mmFrontPanelSwitch = "yes"; // [yes, no]
 // Show the ITX board inside the machine?
 showItxBoard="yes"; // [yes:Yes, no:No]
 // How thick should the printed walls be?
 wallThickness=10; // [3:40]
+
+// Product name on facia
+modelName = "Ganymede";
 
 use <../Lib/mattlib.scad>;
 use <itx.scad>;
 use <usb_connector.scad>;
 use <power_supply_brick.scad>;
 use <92mm_fan.scad>;
+use <floppy_drive_05K9283.scad>;
+use <8mm_panelmount_momentary_switch.scad>;
+use <CoventryGardenNF.ttf>;
 
 powerSupplyLocation = [77,60.5-3,25.4+8];
 
@@ -368,21 +382,6 @@ module vents(){
     }
 }
 
-
-module cutouts(){
-    screenCutout();
-    vents();
-    feet();
-    rearStickerRecess();
-    color("grey")interior_volume();
-    
-    // Front panel screen retainer screws
-    rotate([-5,0,0])translate([2,-114.5,200]){
-        translate([0,-2,-70])rotate([-90,0,0])#screenRetainerScrews();
-    }
-
-}
-
 module screenAssembly(){
     //rotate([-5,0,0]){
         color("silver")cube([175,3,136], center=true);
@@ -406,13 +405,13 @@ module selfTappingScrew(){
     translate([0,0,15-(4/2)])cylinder(h=4,d2=7,d1=5, center=true);
 }
 module screenRetainerScrews(){
-    mirrorCopy()translate([90,3,-6])selfTappingScrew();
+    #mirrorCopy()translate([80,3,-6])selfTappingScrew();
 }
 module screenRetainer(){
     difference(){
         hull(){
             mirrorCopy([1,0,0])mirrorCopy([0,1,0])
-                translate([100,5,9/2])cylinder(h=9,d=10, center=true);
+                translate([90,5,9/2])cylinder(h=9,d=10, center=true);
         }
         screenRetainerScrews();
     }
@@ -442,28 +441,48 @@ module boltTopFrameRetainerRear(){
 }
 
 module boltTopFrameRetainerFront(){
+    // Cylinder
     translate([0,0,-50])cylinder(h=160,d=20, center=true);
+    // Gusset to wall
     translate([-5,0,-50])cube([10,20,160],center=true);
+    // Gusset to lower facia
+    translate([0,-5-2,-50-50-9-.5])cube([20,14,50],center=true);
 }
 
 
 
-
-/*
-rotate([-5,0,0])translate([0,-90,0]){
-    translate([0,0,275])rotate([-90,90,0])metricCapheadAndBolt(6, 10, recessNut=10, recessCap=30);
-    //mirrorCopy()translate([90,0,50])rotate([-90,90,0])metricCapheadAndBolt(6, 10, recessNut=1, recessCap=20);
-}*/
+module faciaBoltHole(){
+    rotate([-5,0,0])translate([0,-90,0]){
+        translate([0,0,275]){
+            rotate([-90,90,0])translate([0,0,0])metricCapheadAndBolt(6, 20, recessNut=10, recessCap=35);
+        }
+    }
+}
+module faciaBoltPlastic(){
+    rotate([-5,0,0])translate([0,-90,0]){
+        translate([0,0,275]){
+            translate([0,11,0])rotate([90,0,0])cylinder(h=50,d=20, center=true);
+            translate([0,11,10])rotate([90,0,0])cube([20,20,50],center=true);
+        }
+    }
+}
 
 
 module usbCutouts(){
     // Front
-    translate([50,-84.5,17])
-        mirrorCopy()
+    if(featureFrontUSB==1){
+        translate([48.0+21,-84.5,17])
             color("darkgrey")
-                translate([20,0,0])
-                    rotate([270,0,0])
-                        usbHeaderConnectorCutout();
+                rotate([270,0,0])
+                    usbHeaderConnectorCutout();
+    }else if(featureFrontUSB==2){
+        translate([48.0,-84.5,17])
+            mirrorCopy()
+                color("darkgrey")
+                    translate([21,0,0])
+                        rotate([270,0,0])
+                            usbHeaderConnectorCutout();
+    }
     // Rear
     translate([-87+50,123.5-1.7-2.8-0.1,24])
         mirrorCopy([0,0,1])
@@ -511,9 +530,6 @@ module sliceBodyRear(){
     }
     
 }
-
-
-
 
 module powerSupplyCutout(){
     translate(powerSupplyLocation)rotate([0,-90,0]){
@@ -596,6 +612,8 @@ module duct_inner(){
         translate(radiatorBottom_inner)cube([90-fanInnerWallThickness*2,1,1], center=true);
         translate(fanOpeningRear_inner)cube([90-5-2-fanInnerWallThickness*2,1,1], center=true);//???
         translate(fanOpeningFrontLower_inner)cube([90-fanInnerWallThickness*2,1,1], center=true);
+        translate(fanOpeningRear_inner+[25,4,0])cube([90-5-2-fanInnerWallThickness*2,1,1], center=true);//???
+        translate(radiatorBottom_inner)cube([90-fanInnerWallThickness*2,1,1], center=true);
     }    
     hull(){
         translate(radiatorTop_inner)cube([90-fanInnerWallThickness*2,1,1], center=true);
@@ -615,10 +633,10 @@ module duct_inner(){
 module duct_support_posts(){
     difference(){
         translate(fanCutoutPosition){
-            translate([82.5/2,82.5/2,-31.5])cylinder(h=13,d=9, center=true);
-            translate([82.5/2,82.5/-2,-50])cylinder(h=50,d=9, center=true);
-            translate([82.5/-2,82.5/2,-50])cylinder(h=50,d=9, center=true);
-            translate([82.5/-2,82.5/-2,-50])cylinder(h=50,d=9, center=true);
+            translate([82.5/2,82.5/2,-31.5+1])cylinder(h=11,d=12, center=true);
+            translate([82.5/2,82.5/-2,-50])cylinder(h=50,d=12, center=true);
+            translate([82.5/-2,82.5/2,-50])cylinder(h=50,d=12, center=true);
+            translate([82.5/-2,82.5/-2,-50])cylinder(h=50,d=12, center=true);
         }
         difference(){
             translate([20,20,210])cube([150,150,150], center=true);
@@ -640,16 +658,85 @@ module duct(){
             translate(fanOpeningRear+[2,-1.25,-0])cube([89.5,5.5,3], center=true);
        }
     
-        translate(fanCutoutPosition)fanCutout92mm(depthForCaphead=2, recessNut=30);
+        translate(fanCutoutPosition)fanCutout92mm(depthForCaphead=2, recessNut=30, boltCutout=8);
     }
     
+}   
+
+
+
+ssd25 = [100+0.4,69.85+0.25,9.5+0.2];
+module ssd2point5inch(sideScrews=false,bottomScrews=false){
+    if($preview && showItxBoard){
+        translate([ssd25.x/-2,0,ssd25.z/2])cube(ssd25, center=true);
+        
+        mirrorCopy([0,1,0]){
+            if(bottomScrews){
+                translate([(14.0)*-1,61.72/2,3.5-5])rotate([0,180,0])metricCapheadAndBolt(3, 11, recessNut=0, recessCap=20);
+                translate([(90.6)*-1,61.72/2,3.5-5])rotate([0,180,0])metricCapheadAndBolt(3, 11, recessNut=0, recessCap=20);
+            }
+            if(sideScrews){
+                translate([(90.6)*-1,(ssd25.y+10)/2,3.5-5])rotate([-90,180,0])metricCapheadAndBolt(3, 11, recessNut=0, recessCap=20);
+                translate([(14.0)*-1,(ssd25.y+10)/2,3.5-5])rotate([-90,180,0])metricCapheadAndBolt(3, 11, recessNut=0, recessCap=20);
+            }
+            
+        }
+    }
+}
+//ssd2point5inch(bottomScrews=true);/*
+module floppyDriveAssemblyPlastic(){
+    translate([41,-45,92])rotate([5,0,180]){
+        difference(){
+            union(){
+                translate([-2.5,-58.5,0])cube([125,10,30], center=true);
+                translate([-2.5+125/2-10,-58.5,-45])cube([20,10,80], center=true);
+                //translate([-40,-75,0])cube([40,10,30], center=true);
+                translate([-1.5,59,-15])cube([123,10,60], center=true);
+            }
+            // Unblock bolt hole.
+            translate([-55,-60,-16])
+                rotate([90,0,0])
+                    cylinder(h=30,d=15, center=true);
+        }
+    }
+}
+     
+module logoText(){
+    translate([-90,-120-.5+1,92])
+        rotate([90-5,0,0])
+            color("black")
+                //scale([1.3,1.3,1])
+                    linear_extrude(2)
+                        text(modelName, font="Coventry Garden NF");
 }
 
-
-//duct();
-
-//translate(fanCutoutPosition)fanCutout92mm(depthForCaphead=2, recessNut=0);
-
+module floppyDriveAssemblyHoles(){ 
+    translate([41,-45,92])rotate([5,0,180]){
+        floppyDrive05K9283();
+        union(){
+            union(){
+                hull(){
+                    translate([0,75,0])
+                        cube([95,1,10], center=true);
+                    translate([1,72.5,0])
+                        cube([90,1,6], center=true);
+                }
+                hull(){
+                    translate([-33,75,0])
+                        cube([35,1,25], center=true);
+                    translate([-33,72.5,0])
+                        cube([25,1,15], center=true);
+                }
+            }
+            union(){
+                translate([1,72.5,0])
+                    cube([90,20,6], center=true);
+                translate([-33,72.5,0])
+                    cube([25,20,15], center=true);
+            }
+        }
+    }
+}
 
 module wholeThing(){
     difference(){
@@ -660,12 +747,25 @@ module wholeThing(){
                     facia();
                     
                 }
-                cutouts();
+                screenCutout();
+                vents();
+                feet();
+                rearStickerRecess();
+                color("grey")interior_volume();
+                
+                // Front panel screen retainer screws
+                rotate([-5,0,0]){
+                    translate([2,-114.5,200]){
+                        translate([0,-2,-70])
+                            rotate([-90,0,0])
+                                screenRetainerScrews();
+                    }
+                }
             }
             // motherboard standoffs
             translate(itxOffset)rotate(itxRotation)itxStandoffs();
             
-            difference(){
+            color("green")difference(){
                 rotate([-5,0,0])translate([2,-114.5,200]){
                     translate([0,-2,-70])rotate([-90,0,0])screenRetainer();
                     translate([0,1,69])rotate([45,0,0])cube([180,6,8], center=true);
@@ -683,7 +783,16 @@ module wholeThing(){
             // Bottom bolts (front)
             mirrorCopy()translate([-99,-67,135])boltTopFrameRetainerFront();
             
+            // Brace to retain power supply
             powerSupplyBrace();
+            
+            // Floppy drive assembly
+            if(featureFloppyDrive=="yes"){
+                floppyDriveAssemblyPlastic();
+            }
+            
+            // Facia retaining bolt
+            faciaBoltPlastic();
 
         }
         // Bottom bolt holes (rear)
@@ -694,14 +803,36 @@ module wholeThing(){
         // USB cutouts
         usbCutouts();
         
+        // Power button cutout
+        if(feature8mmFrontPanelSwitch=="yes"){
+            translate([-90,-95-6,57])
+                rotate([5,180,0])
+                    8mm_panelmount_button();
+        }
+        
         // Fan cutout
-        translate(fanCutoutPosition)fanCutout92mm(depthForCaphead=2, recessNut=62);
+        translate(fanCutoutPosition)fanCutout92mm(depthForCaphead=2, recessNut=62, boltCutout=8);
         
         // Cutout for PSU
         powerSupplyCutout();
         
         // Motherboard screw holes
         translate(itxOffset)rotate(itxRotation)translate([0,0,6])itxM3Bolts();
+        
+        // 2.5" drive holes
+        if(featureSataDriveHoles=="yes"){
+            translate([-104.5,-40,185])rotate([-5,0,0])rotate([0,90,0])ssd2point5inch(bottomScrews=true);
+        }
+        
+        // Floppy drive assembly holes
+        if(featureFloppyDrive=="yes"){
+            floppyDriveAssemblyHoles();
+        }
+        
+        // Facia retaining bolt
+        faciaBoltHole();
+        
+        logoText();
     }
     
     if($preview && renderPrintablePart=="none"){
@@ -709,15 +840,55 @@ module wholeThing(){
     }
 }
 
-module part_facia(){
+module part_facia_bracket_excluder(){
+    rotate([-5.6,0,0])
+        translate([0,-107,130])   
+            cube([195,20,30], center=true);
+}
+//part_facia_bracket_excluder();
+module part_facia_unrotated(){
     difference(){
-        rotate([5,0,0]){
-            difference(){
-                wholeThing();
-                sliceRear();
-            }
+        wholeThing();
+        sliceRear();
+        part_facia_bracket_excluder();
+    }
+    
+}
+module part_screen_retainer_bracket(){
+    if(rotateForPrint=="yes"){
+        rotate([5,0,0])
+            part_screen_retainer_bracket_unrotated();
+    }else{
+        part_screen_retainer_bracket_unrotated();
+    }
+}
+module part_screen_retainer_bracket_unrotated(){
+    
+    difference(){
+        difference(){
+            wholeThing();
+            sliceRear();
         }
-        color("red")translate([0,-110,28.75])cube([230,70,10], center=true);    
+        difference(){
+            translate([0,0,200])
+                cube([500,300,400], center=true);   
+            part_facia_bracket_excluder();
+        }
+    }
+}
+//part_screen_retainer_bracket();
+module part_facia(){
+    if(rotateForPrint=="yes"){
+        difference(){
+            rotate([5,0,0]){
+                part_facia_unrotated();
+            }
+            color("red")
+                translate([0,-110,28.75])
+                    cube([230,70,10], center=true);    
+        }
+    }else{
+        part_facia_unrotated();
     }
 }   
     
@@ -769,6 +940,8 @@ module part_duct(){
 if(renderPrintablePart != "none"){
     if(renderPrintablePart == "facia"){
         part_facia();
+    }else if(renderPrintablePart == "screen_retainer_bracket"){
+        part_screen_retainer_bracket();
     }else if(renderPrintablePart == "top_front"){
         part_top_front();
     }else if(renderPrintablePart == "top_rear"){
