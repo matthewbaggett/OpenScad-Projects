@@ -44,6 +44,7 @@ module bearing_text(id, od, wd, st, radiusConsumed=180){
 
 
 module bearing_608(labels=true){ bearing(8,22,7,"5972K91","608", labels=labels); }
+module bearing_626(labels=true){ bearing(6,19,6,"6661K11","626", labels=labels); }
 module bearing_629(labels=true){ bearing(9,26,8,"5972K93","629", labels=labels); }
 module bearing_635(labels=true){ bearing(5,19,6,"5972K197","635", labels=labels); }
 module bearing_6000(labels=true){ bearing(10,26,8,"5972K94","6000", labels=labels); }
