@@ -32,10 +32,11 @@ module screenAperture(depth=0.1){
 
 lcdPanelAssemblyDims = [175,3,136];
 module lcdPanelAssembly(){
+    translate([0,-1.5+0.01,0]){
         color("silver")cube(lcdPanelAssemblyDims, center=true);
         translate([-(10/2)+3,-1.5,(13/2)-3])color("black")cube([175-10,0.1,136-13], center=true);
-        color("green")translate([0,11.5,0])cube([120,20+0.1,lcdPanelAssemblyDims.z*1.3], center=true);
-    
+        //color("green")translate([0,11.5,0])cube([120,20+0.1,lcdPanelAssemblyDims.z*1.3], center=true);
+    }
 }
 
 module lcdPanelCutout(){
@@ -57,36 +58,59 @@ module lcdPanelCutout(){
 
 lcdCutout_testFixture_radius = 8;
 
-module lcdCutout_testFixture(){
-    difference(){
-        color("lightblue")
-            translate([0,0,-0])
+module lcdCutout_plastic(includeRetainer=true){
+    
+    if(includeRetainer){
+        color("pink"){
+            mirrorCopy([1,0,0]){
                 hull(){
-                    mirrorCopy([1,0,0]){
-                        mirrorCopy([0,1,0]){
-                            translate([((lcdPanelAssemblyDims.x+25)/2)-lcdCutout_testFixture_radius,((lcdPanelAssemblyDims.z+25)/2)-lcdCutout_testFixture_radius,0])
-                                cylinder(h=17, r=lcdCutout_testFixture_radius, center=true);
-                        }
+                    mirrorCopy([0,1,0]){
+                        translate([((lcdPanelAssemblyDims.x+25)/2)-lcdCutout_testFixture_radius,((lcdPanelAssemblyDims.z+25)/2)-lcdCutout_testFixture_radius,8/2])
+                            cylinder(h=8, r=lcdCutout_testFixture_radius, center=true);
+                    }
+                    mirrorCopy([0,1,0]){
+                        translate([((lcdPanelAssemblyDims.x+25)/2)-lcdCutout_testFixture_radius-15,((lcdPanelAssemblyDims.z+25)/2)-lcdCutout_testFixture_radius,8/2])
+                            cylinder(h=8, r=lcdCutout_testFixture_radius, center=true);
                     }
                 }
+            }
+        }
+    }
+    color("lightblue"){
+        hull(){
+            mirrorCopy([1,0,0]){
+                mirrorCopy([0,1,0]){
+                    translate([((lcdPanelAssemblyDims.x+25)/2)-lcdCutout_testFixture_radius,((lcdPanelAssemblyDims.z+25)/2)-lcdCutout_testFixture_radius,8/-2])
+                        cylinder(h=8, r=lcdCutout_testFixture_radius, center=true);
+                }
+            }
+        }
+    }
+}
+//lcdPanelCutout();/*
+//lcdCutout_plastic();/*
+module lcdCutout_testFixture(){
+    difference(){
+        lcdCutout_plastic();
 
         lcdPanelCutout();
     }
 }
 //lcdCutout_testFixture();/*
 
-/*translate([0,0,10]){
+
+translate([0,0,10]){
     difference(){
         lcdCutout_testFixture();
-        translate([0,0,-25])
+        translate([0,0,-25+0.02])
             cube([300,300,50], center=true);
     }
 }
-/**/
+/*
 translate([0,0,-10]){
     difference(){
         lcdCutout_testFixture();
-        translate([0,0,+25])
+        translate([0,0,+25-0.01])
             cube([300,300,50], center=true);
     }
 }

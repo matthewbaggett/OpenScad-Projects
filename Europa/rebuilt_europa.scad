@@ -1,13 +1,10 @@
-// Render the original Europa on top?
-showOriginal="no"; // [yes:Yes, no:No]
-showOriginalPercentage=50; // [10:100]
 // Show construction balls
 showConstructionBalls="no"; // [yes:Yes, no:No]
 // Render half of the model?
 renderPortion="all"; // [left, right, front, back, top, bottom, all, none]
 
 // Render printable part, overrides portion
-renderPrintablePart = "none"; // [none, facia, top_front, top_rear, bottom_front, bottom_rear, screen_retainer_bracket, duct, all]
+renderPrintablePart = "none"; // [none, facia, top_front, top_rear, bottom_front, bottom_rear, duct, all, test_power_button]
 // Should the part be rotated as if it is for a print?
 rotateForPrint = "no"; // [no, yes]
 
@@ -20,7 +17,7 @@ featureFeetRecess="yes"; // [yes:Yes, no:No]
 // Feature: Sticker recess on rear
 featureRearStickerRecess="yes"; // [yes:Yes, no:No]
 // Feature: Front USB Ports
-featureFrontUSB=1; // [0:2]
+featureFrontUSB=2; // [0:2]
 // Feature: Internal floppy drive
 featureFloppyDrive="yes"; //[yes:"Haha yes floppy go brr", no:"No, I am boring"]
 // Feature: Internal 2.5" drive
@@ -28,7 +25,7 @@ featureSataDriveHoles="no"; //[yes:"Add 2.5 inch drive mount", no]
 // Feature: 8mm front panel switch under the chin
 feature8mmFrontPanelSwitch = "yes"; // [yes, no]
 // Show the ITX board inside the machine?
-showItxBoard="yes"; // [yes:Yes, no:No]
+showItxBoard="no"; // [yes:Yes, no:No]
 // How thick should the printed walls be?
 wallThickness=10; // [3:40]
 
@@ -41,10 +38,17 @@ use <usb_connector.scad>;
 use <power_supply_brick.scad>;
 use <92mm_fan.scad>;
 use <floppy_drive_05K9283.scad>;
+use <screen.scad>;
 use <8mm_panelmount_momentary_switch.scad>;
 use <CoventryGardenNF.ttf>;
 
+$fn=60;
 powerSupplyLocation = [77,60.5-3,25.4+8];
+lcdTranslate = [-1.5,-95,215];
+lcdRotate = [-90-5,0,0];
+buttonTranslate = [-90,-95-6,57];
+buttonRotate = [5,180,0];
+faciaSize=[213,245,0.25];
 
 module sph(){
     sphere(d=10);
@@ -60,27 +64,6 @@ module node(sphereOrCylinder="cylinder"){
         sph();
     }
 }
-
-module europa_original(){
-    color("grey")
-    render()
-    difference(){
-        translate([1.245,73.638,0])
-            rotate(180)
-                import("source_stls/europa-solid_fixed.stl");
-        
-        // Prune underside
-        translate([0,0,-5])
-            cube([300,300,10], center=true);
-    }
-}
-
-$fn=60;
-if(showOriginal=="yes"){
-    echo(100/showOriginalPercentage);
-    color("lightgreen",showOriginalPercentage/100)render()europa_original();
-}
-
 
 cornerFrontChin=[0,-83.5,5];
 cornerRearBottom=[0,118.5,5];
@@ -297,7 +280,6 @@ module faciaSliver(){
                 cube([300,450,400], center=true);
     }
 }
-faciaSize=[213,245,0.25];
 module facia(){
        hull(){
         rotate([-5,0,0])
@@ -382,41 +364,6 @@ module vents(){
     }
 }
 
-module screenAssembly(){
-    //rotate([-5,0,0]){
-        color("silver")cube([175,3,136], center=true);
-        translate([-(10/2)+3,-1.5,(13/2)-3])color("black")cube([175-10,0.1,136-13], center=true);
-        color("green")translate([0,11.5,(-36/2)-3])cube([120,20+0.1,100], center=true);
-    //}
-}
-
-module screen(){
-    rotate([-5,0,0])translate([2,-114.5,200]){
-        screenAssembly();
-        translate([0,-2,-70])rotate([-90,0,0])screenRetainer();
-        translate([0,1,69])rotate([45,0,0])cube([180,6,8], center=true);
-    }
-}
-
-
-module selfTappingScrew(){
-    translate([0,0,15/2])cylinder(h=15,d=3, center=true);
-    translate([0,0,15-2.5-4])cylinder(h=5,d=5, center=true);
-    translate([0,0,15-(4/2)])cylinder(h=4,d2=7,d1=5, center=true);
-}
-module screenRetainerScrews(){
-    #mirrorCopy()translate([80,3,-6])selfTappingScrew();
-}
-module screenRetainer(){
-    difference(){
-        hull(){
-            mirrorCopy([1,0,0])mirrorCopy([0,1,0])
-                translate([90,5,9/2])cylinder(h=9,d=10, center=true);
-        }
-        screenRetainerScrews();
-    }
-}
-
 module boltSideFrameRetainer(){
     rotate([90,90,0]){
         difference(){
@@ -449,12 +396,10 @@ module boltTopFrameRetainerFront(){
     translate([0,-5-2,-50-50-9-.5])cube([20,14,50],center=true);
 }
 
-
-
 module faciaBoltHole(){
     rotate([-5,0,0])translate([0,-90,0]){
         translate([0,0,275]){
-            rotate([-90,90,0])translate([0,0,0])metricCapheadAndBolt(6, 20, recessNut=10, recessCap=35);
+            rotate([-90,90,0])translate([0,0,0])metricCapheadAndBolt(6, 20, recessNut=9, recessCap=35);
         }
     }
 }
@@ -466,7 +411,6 @@ module faciaBoltPlastic(){
         }
     }
 }
-
 
 module usbCutouts(){
     // Front
@@ -528,7 +472,6 @@ module sliceBodyRear(){
         translate([0,200 + sliceDepth-300,200-20])cube([300,300,400+1], center=true);   
         sliceBodyFront();
     }
-    
 }
 
 module powerSupplyCutout(){
@@ -738,6 +681,9 @@ module floppyDriveAssemblyHoles(){
     }
 }
 
+
+
+/**/
 module wholeThing(){
     difference(){
         union(){
@@ -745,35 +691,13 @@ module wholeThing(){
                 union(){
                     body();
                     facia();
-                    
                 }
-                screenCutout();
-                vents();
-                feet();
-                rearStickerRecess();
                 color("grey")interior_volume();
                 
-                // Front panel screen retainer screws
-                rotate([-5,0,0]){
-                    translate([2,-114.5,200]){
-                        translate([0,-2,-70])
-                            rotate([-90,0,0])
-                                screenRetainerScrews();
-                    }
-                }
             }
             // motherboard standoffs
             translate(itxOffset)rotate(itxRotation)itxStandoffs();
             
-            color("green")difference(){
-                rotate([-5,0,0])translate([2,-114.5,200]){
-                    translate([0,-2,-70])rotate([-90,0,0])screenRetainer();
-                    translate([0,1,69])rotate([45,0,0])cube([180,6,8], center=true);
-                }
-                rotate([-5,0,0])translate([2,-114.5,200]){
-                    screenAssembly();
-                }
-            }
             // Top side bolts
             mirrorCopy()translate([-96,20,200])boltSideFrameRetainer();
             // Lower side bolts
@@ -793,7 +717,16 @@ module wholeThing(){
             
             // Facia retaining bolt
             faciaBoltPlastic();
-
+            
+            // LCD Panel
+            translate(lcdTranslate)rotate(lcdRotate){
+                hull(){
+                    lcdCutout_plastic(includeRetainer=false);
+                    translate([0,90,-4])cube([190,1,1], center=true);
+                    translate([0,-90,-.5])cube([200,1,1], center=true);
+                }
+                
+            }
         }
         // Bottom bolt holes (rear)
         mirrorCopy()translate([-99,108,135])boltTopFrameRetainerBolt();
@@ -805,9 +738,7 @@ module wholeThing(){
         
         // Power button cutout
         if(feature8mmFrontPanelSwitch=="yes"){
-            translate([-90,-95-6,57])
-                rotate([5,180,0])
-                    8mm_panelmount_button();
+            translate(buttonTranslate)rotate(buttonRotate)8mm_panelmount_button();
         }
         
         // Fan cutout
@@ -832,6 +763,15 @@ module wholeThing(){
         // Facia retaining bolt
         faciaBoltHole();
         
+        // LCD Panel
+        translate(lcdTranslate)rotate(lcdRotate)lcdPanelCutout();
+        screenCutout();
+        
+        vents();
+        feet();
+        rearStickerRecess();
+
+
         logoText();
     }
     
@@ -850,33 +790,9 @@ module part_facia_unrotated(){
     difference(){
         wholeThing();
         sliceRear();
-        part_facia_bracket_excluder();
-    }
-    
-}
-module part_screen_retainer_bracket(){
-    if(rotateForPrint=="yes"){
-        rotate([5,0,0])
-            part_screen_retainer_bracket_unrotated();
-    }else{
-        part_screen_retainer_bracket_unrotated();
     }
 }
-module part_screen_retainer_bracket_unrotated(){
-    
-    difference(){
-        difference(){
-            wholeThing();
-            sliceRear();
-        }
-        difference(){
-            translate([0,0,200])
-                cube([500,300,400], center=true);   
-            part_facia_bracket_excluder();
-        }
-    }
-}
-//part_screen_retainer_bracket();
+
 module part_facia(){
     if(rotateForPrint=="yes"){
         difference(){
@@ -891,7 +807,18 @@ module part_facia(){
         part_facia_unrotated();
     }
 }   
-    
+module part_test_power_button(){
+
+    difference(){
+        part_facia();
+            difference(){
+                cube([1000,1000,1000], center=true);
+                translate([-90,-105,50-7])
+                    cube([28,28,20], center=true);
+            }
+    }
+}
+
 module part_top_front(){
     difference(){
         wholeThing();
@@ -940,6 +867,8 @@ module part_duct(){
 if(renderPrintablePart != "none"){
     if(renderPrintablePart == "facia"){
         part_facia();
+    }else if(renderPrintablePart == "test_power_button"){
+        part_test_power_button();
     }else if(renderPrintablePart == "screen_retainer_bracket"){
         part_screen_retainer_bracket();
     }else if(renderPrintablePart == "top_front"){
