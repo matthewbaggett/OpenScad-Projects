@@ -4,7 +4,7 @@ showConstructionBalls="no"; // [yes:Yes, no:No]
 renderPortion="all"; // [left, right, front, back, top, bottom, all, none]
 
 // Render printable part, overrides portion
-renderPrintablePart = "none"; // [none, facia, top_front, top_rear, bottom_front, bottom_rear, duct, all, test_power_button]
+renderPrintablePart = "none"; // [none, facia, top_front, top_rear, bottom_front, bottom_rear, duct, all, test_power_button, rear_combined, front_combined]
 // Should the part be rotated as if it is for a print?
 rotateForPrint = "no"; // [no, yes]
 
@@ -44,8 +44,8 @@ use <CoventryGardenNF.ttf>;
 
 $fn=60;
 powerSupplyLocation = [77,60.5-3,25.4+8];
-lcdTranslate = [-1.5,-95,215];
-lcdRotate = [-90-5,0,0];
+lcdTranslate = [+1.5,-95,215-7];
+lcdRotate = [-90+5,180,0];
 buttonTranslate = [-90,-95-6,57];
 buttonRotate = [5,180,0];
 faciaSize=[213,245,0.25];
@@ -339,10 +339,10 @@ module vents(){
         color("blue")mirrorCopy(){
             // Top slots
             for(i = [-7:8]){
-                translate([0,0,255])
+                translate([0,0,255+25])
                     rotate([-5,0,0])
                         translate([81,(i*10)+1,0])
-                            cube([35,3,100], center=true);
+                            cube([35,3,50], center=true);
             }
             // Rear slots
             for(i = [1:4]){
@@ -382,18 +382,22 @@ module boltTopFrameRetainerBolt(){
     rotate([0,180,0])metricCapheadAndBolt(6,50, recessNut=5, recessCap=110);
 }
 module boltTopFrameRetainerRear(){
-    translate([0,0,-50])cylinder(h=160,d=20, center=true);
-    translate([0,5,-50])cube([20,10,160],center=true);
-    translate([-5,0,-50])cube([10,20,160],center=true);
+    if(renderPrintablePart != "rear_combined"){
+        translate([0,0,-50])cylinder(h=160,d=20, center=true);
+        translate([0,5,-50])cube([20,10,160],center=true);
+        translate([-5,0,-50])cube([10,20,160],center=true);
+    }
 }
 
 module boltTopFrameRetainerFront(){
-    // Cylinder
-    translate([0,0,-50])cylinder(h=160,d=20, center=true);
-    // Gusset to wall
-    translate([-5,0,-50])cube([10,20,160],center=true);
-    // Gusset to lower facia
-    translate([0,-5-2,-50-50-9-.5])cube([20,14,50],center=true);
+    if(renderPrintablePart != "front_combined"){
+        // Cylinder
+        translate([0,0,-50])cylinder(h=160,d=20, center=true);
+        // Gusset to wall
+        translate([-5,0,-50])cube([10,20,160],center=true);
+        // Gusset to lower facia
+        translate([0,-5-2,-50-50-9-.5])cube([20,14,50],center=true);
+    }
 }
 
 module faciaBoltHole(){
@@ -722,8 +726,8 @@ module wholeThing(){
             translate(lcdTranslate)rotate(lcdRotate){
                 hull(){
                     lcdCutout_plastic(includeRetainer=false);
-                    translate([0,90,-4])cube([190,1,1], center=true);
-                    translate([0,-90,-.5])cube([200,1,1], center=true);
+                    translate([0,-90,-4])cube([190,1,1], center=true);
+                    translate([0,90,-.5])cube([200,1,1], center=true);
                 }
                 
             }
@@ -879,6 +883,12 @@ if(renderPrintablePart != "none"){
         part_bottom_front();
     }else if(renderPrintablePart == "bottom_rear"){
         part_bottom_rear();
+    }else if(renderPrintablePart == "rear_combined"){
+        part_bottom_rear();
+        part_top_rear();
+    }else if(renderPrintablePart == "front_combined"){
+        part_bottom_front();
+        part_top_front();
     }else if(renderPrintablePart == "duct"){
         part_duct();
     }else if(renderPrintablePart == "all"){

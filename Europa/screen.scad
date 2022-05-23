@@ -30,10 +30,11 @@ module screenAperture(depth=0.1){
     translate([-(10/2)+3,-1.5-(depth/2),(13/2)-3])color("black")cube([175-10,depth,136-13], center=true);
 }
 
-lcdPanelAssemblyDims = [175,3,136];
+lcdPanelAssemblyDims = [175,3,136.5];
 module lcdPanelAssembly(){
     translate([0,-1.5+0.01,0]){
         color("silver")cube(lcdPanelAssemblyDims, center=true);
+        color("silver")cube([80,lcdPanelAssemblyDims.y, lcdPanelAssemblyDims.z+4], center=true);
         translate([-(10/2)+3,-1.5,(13/2)-3])color("black")cube([175-10,0.1,136-13], center=true);
         //color("green")translate([0,11.5,0])cube([120,20+0.1,lcdPanelAssemblyDims.z*1.3], center=true);
     }
@@ -49,7 +50,7 @@ module lcdPanelCutout(){
         mirrorCopy([0,1,0]){
             translate([(lcdPanelAssemblyDims.x/2)+5,(lcdPanelAssemblyDims.z/2)+5,5.1]){
                 rotate(90)
-                    metricCapheadAndBolt(6, 11, recessNut=1, recessCap=20);
+                    metricCapheadAndBolt(6, 11, recessNut=1, recessCap=0);
             }
         }
     }
@@ -106,7 +107,7 @@ translate([0,0,10]){
             cube([300,300,50], center=true);
     }
 }
-/*
+
 translate([0,0,-10]){
     difference(){
         lcdCutout_testFixture();
