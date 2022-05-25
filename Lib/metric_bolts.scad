@@ -45,7 +45,7 @@ module metricSocketCap(mSize, length, structural=false,recessCap=0, chamfer=fals
     if(recessCap > 0){
         color(boltClearanceColour, boltClearanceTransparency)
         translate([0,0,(length + ((recessCap/2)+(mSize*1.25)))])
-        cylinder(d=capSize,h=recessCap, center=true, $fn=circleFacets);
+        cylinder(d=capSize,h=recessCap+0.01, center=true, $fn=circleFacets);
     }
     if(chamfer){
         color(boltClearanceColour, boltClearanceTransparency)
