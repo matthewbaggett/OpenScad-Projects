@@ -78,3 +78,29 @@ tumbler:
 							-o /src/tumbler_{}.stl \
 							-D 'part="{}"' \
 							/src/tumbler.scad
+
+ikea-m93p-cluster:
+	echo -n "all" | \
+		xargs -d ' ' --no-run-if-empty -n1 -P2 -I {} \
+			docker \
+				run \
+					--rm \
+					-v $(PWD)/:/src \
+					bbassett/openscad \
+						openscad \
+							-o /src/ikea_m93p_cluster_{}.stl \
+							-D 'part="{}"' \
+							/src/ikea_m93p_cluster.scad
+
+3kg-spool-carrier-horizontal:
+	echo -n "left right top hat" | \
+		xargs -d ' ' --no-run-if-empty -P1 -I {} \
+			docker \
+				run \
+					--rm \
+					-v $(PWD)/:/src \
+					bbassett/openscad \
+						openscad \
+							-o /src/3kg-spool-carrier-horizontal-{}.stl \
+							-D 'part="{}"' \
+							/src/3kg-spool-carrier-horizontal.scad
