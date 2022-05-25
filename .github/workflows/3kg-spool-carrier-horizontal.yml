@@ -1,0 +1,41 @@
+name: Rock tumbler
+
+on:
+  push:
+    paths:
+      - '3kg-spool-carrier-horizontal.scad'
+      - 'Lib'
+  workflow_dispatch:
+
+jobs:
+  build-3kg-spool-carrier-horizontal:
+    name: Compile STL
+    strategy:
+      fail-fast: false
+      matrix:
+        component:
+          - left
+          - right
+          - top
+          - hat
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v2
+      - name: "Compile ${{ matrix.component }}"
+        uses: addnab/docker-run-action@v3
+        with:
+          image: bbassett/openscad
+          options: -v ${{ github.workspace }}:/src
+          run: |
+            openscad \
+              -o /src/3kg-spool-carrier-horizontal-{{ matrix.component }}.stl \
+              -D 'part="${{ matrix.component }}"' \
+              -D 'layOutForPrint="yes"' \
+              /src/3kg-spool-carrier-horizontal.scad
+      - name: "Store ${{ matrix.component }} artifact."
+        uses: actions/upload-artifact@v3
+        if: ${{ !env.ACT }}
+        with:
+          name: 3KG Spool Carrier Horizontal - ${{ matrix.component }}
+          path: ./3kg-spool-carrier-horizontal-{{ matrix.component }}.stl
