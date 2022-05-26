@@ -638,7 +638,7 @@ module floppyDriveAssemblyPlastic(){
                 translate([-2.5,-58.5,0])cube([125,10,30], center=true);
                 translate([-2.5+125/2-10,-58.5,-45])cube([20,10,80], center=true);
                 //translate([-40,-75,0])cube([40,10,30], center=true);
-                translate([-1.5,59,-15])cube([123,10,60], center=true);
+                translate([-1.5-.5,59,-15])cube([124,10,60], center=true);
             }
             // Unblock bolt hole.
             translate([-55,-60,-16])
