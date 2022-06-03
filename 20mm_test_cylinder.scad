@@ -23,9 +23,7 @@ module testCyl(height, diameter){
 }
 
 
-translate([0,0,0])
-    testCyl(20,20);
-translate([0,25,0])
-    testCyl(50,20);
-translate([0,50,0])
-    testCyl(99,25);
+//translate([0,0,0])testCyl(20,20);
+translate([25,0,0])testCyl(height=5,diameter=30);
+//translate([0,25,0])testCyl(50,20);
+//translate([0,50,0])testCyl(99,25);
