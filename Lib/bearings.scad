@@ -1,6 +1,6 @@
 $useMcMaster = true;
 module bearing(id, od, wd, mcmaster, series, labels=false){
-    echo(str("Creating a ", series, " bearing with id=", id, "mm od=", od, "mm width=", wd, "mm ..."));
+    //echo(str("Creating a ", series, " bearing with id=", id, "mm od=", od, "mm width=", wd, "mm ..."));
     difference(){
         color("grey")cylinder(d=od,h=wd, center=true);
         color("white")cylinder(d=id,h=wd+1, center=true);  

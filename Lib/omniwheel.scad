@@ -104,21 +104,26 @@ module hubAssembly(outerDiameterMM){
     }
 }
 
-module omniwheel(outerDiameterMM=120){
-    color("lightblue")hubAssembly(outerDiameterMM);
-    color("lightgreen")rotationalAssembly(outerDiameterMM);
-    // Outline limit
-    if($preview){
-        color("lightblue",0.1){
-            rotate([0,90,0]){
-                difference(){
-                    cylinder(h=0.1,d=outerDiameterMM, center=true);
-                    cylinder(h=0.1+0.1,d=outerDiameterMM-1, center=true);
+module omniwheel(outerDiameterMM=120,includeHub=true,includeRollers=true){
+    render(){
+        if(includeHub){
+            color("lightblue")hubAssembly(outerDiameterMM);
+        }
+        if(includeRollers){
+            color("lightgreen")rotationalAssembly(outerDiameterMM);
+        }
+        // Outline limit
+        if($preview){
+            color("lightblue",0.1){
+                rotate([0,90,0]){
+                    difference(){
+                        cylinder(h=0.1,d=outerDiameterMM, center=true);
+                        cylinder(h=0.1+0.1,d=outerDiameterMM-1, center=true);
+                    }
                 }
             }
         }
     }
-
 }
 
 if(part=="all"){
