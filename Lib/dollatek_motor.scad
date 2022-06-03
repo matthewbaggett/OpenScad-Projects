@@ -77,7 +77,7 @@ module dollatek_gearbox_cutout_shaft(screwHoleCutoutMM=50){
         // Output Shaft
         difference(){
             // Shaft body
-            rotate([0,90,0])cylinder(h=36.5,d=5, center=true);
+            rotate([0,90,0])cylinder(h=36.5,d=5.2, center=true);
             // Flats
             mirrorCopy([1,0,0])mirrorCopy([0,0,1])translate([(36.5-7.5)/2,0,3.6])cube([7.5+0.01,5,3.6], center=true);
             
