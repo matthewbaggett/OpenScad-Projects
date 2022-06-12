@@ -8,7 +8,6 @@ module o_ring(id=20,girth=2.5,$fn=180){
 
 
 module o_ring_groove(girth=3,length = 50, height = 100, radius = 15){
-    $fn = $fn?$fn:30;
     translate([radius+(girth/2),radius+(girth/2),0]){
         difference(){
             o_ring(id=radius*2,girth=girth, $fn=$fn);

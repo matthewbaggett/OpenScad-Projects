@@ -20,7 +20,6 @@ d = mSize;
     }
 }
 
-$fn=30;
 translate([0,0,0])selfTappingScrew(mSize=3, length=30);
 translate([0,20,0])selfTappingScrew(mSize=5, length=20);
 translate([0,40,0])selfTappingScrew(mSize=3, length=20, recessCap=10);

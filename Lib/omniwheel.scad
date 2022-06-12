@@ -9,7 +9,6 @@ rollerClearanceMM = 4;
 part = "all"; //[roller, hub, all]
 
 function select(vector, indices) = [ for (index = indices) vector[index] ];
-$fn=120;
 subAssemblyPivotAngle = 45;
 subAssemblyCount = 8;
 
@@ -138,18 +137,19 @@ if(part=="all"){
 module part_omniwheel_hub(outerDiameterMM){
     color("lightblue")hubAssembly(outerDiameterMM);
 }
-module part_rollers(outerDiameterMM){
+module part_rollers(outerDiameterMM, distanceBetween=max(rollerProfile)*2){
+    translate([0,0,-3])
     //rotationalAssembly(outerDiameterMM=outerDiameterMM);
     difference(){
         union(){
             rotate([0,90,0])
-                translate([0,max(rollerProfile),0])
+                translate([0,distanceBetween/2,0])
                     singleRotationalAssembly(profile=rollerProfile, length=rollerLength);
             rotate([0,-90,0])
-                translate([0,-max(rollerProfile),0])
+                translate([0,distanceBetween/-2,0])
                     singleRotationalAssembly(profile=rollerProfile, length=rollerLength);
         }
         translate([0,0,(rollerLength+1)/-2])
-            cube([max(rollerProfile),max(rollerProfile)*3,rollerLength+1], center=true);
+            cube([distanceBetween/2,distanceBetween/2*3,rollerLength+1], center=true);
     }
 }

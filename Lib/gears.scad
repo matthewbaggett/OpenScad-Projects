@@ -1,4 +1,3 @@
-$fn = 50;
 
 /* Library for Involute Gears, Screws and Racks
 
