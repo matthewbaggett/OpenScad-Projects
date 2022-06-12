@@ -4,9 +4,13 @@ showCutouts = true; // [true:Yes,false:No]
 showBearings = true; // [true:Yes,false:No]
 showFrame = true; // [true:Yes,false:No]
 
-printablePart = "no"; // [no:No, hub:Wheel Hub, drivegear:Drive Gear]
+printablePart = "no"; // [no:No, hub_outer:Wheel Hub Outer, hub_inner:Wheel Hub Inner, hub_roller:Wheel Hub Roller, drivegear:Drive Gear, test_frame:Test Motor Frame, test_frame_undriven_carrier:Test Motor Frame Undriven Carrier]
+
+// Should I show my print bed volume?
+showPrintBed = true; // [true:Yes, false:No]
 
 use <../Lib/mirrorcopy.scad>
+use <../Lib/pcd.scad>
 use <../Lib/metric_bolts.scad>
 use <../Lib/metric_screws.scad>
 use <../Lib/gears.scad>
@@ -16,7 +20,7 @@ use <../Lib/omniwheel.scad>
 
 module herpderp(){}
 mod=2.5;
-$fn=60;
+$fn=$preview?60:120;
 omniWheelSize = 120;
 cutoutSpacing = 2;
 gearMeshHeight = -38;
@@ -65,11 +69,7 @@ module wheelRotorAndHub(includeRollers=true){
     
     // Wheel
     omniwheel(outerDiameterMM=omniWheelSize,includeRollers=includeRollers);
-
-    
 }
-
-
 
 module wheelGearbox_dollatekGearbox(){
     // Dollatek gearbox
@@ -80,9 +80,21 @@ module wheelGearbox_dollatekGearbox(){
 module wheelGearbox_dollatekGearbox_cutouts(){
     // Dollatek gearbox
     translate([-53,0,gearMeshHeight])
-        rotate([90,0,0])
+        rotate([90,0,0]){
             render()dollatek_gearbox(cutouts=true);
+            mirrorCopy([0,1,0])
+                translate([0,(20.5-3)/2,24.5-5.3])
+                    translate([-3.6+2.5,0,0])
+                        rotate([0,90,0])
+                            rotate(90)metricCapheadAndBolt(3, 25, recessNut=10, recessCap=1);
+
+            translate([-8.3+8.6,0,-13.5])
+                rotate([0,90,0])
+                    metricCapheadAndBolt(3, 25, recessNut=10, recessCap=1);
+        }
+    
 }
+
 module wheelGearbox_mainGear(){
     // Main gear
     translate([-27-15,0,0])
@@ -127,7 +139,7 @@ module wheelAndGearboxCutout(){
             hull(){
                 rotate([0,90,0])
                     cylinder(d=omniWheelSize+5+cutoutSpacing, h=58+cutoutSpacing, center=true);
-                translate([0,0,(omniWheelSize/-2)+5])
+                translate([0,0,(omniWheelSize/-2)])
                     hull()
                         mirrorCopy([1,0,0],[0,1,0])
                             translate([(58+cutoutSpacing-10)/2, (omniWheelSize+5+cutoutSpacing-10)/2,0])
@@ -143,7 +155,8 @@ module wheelAndGearboxCutout(){
 
 module wheelFloor(){
     // Floor
-    translate([-20,0,-50])cube([120,140,10], center=true);
+    translate([-15+5,0,-53])
+        cube([110+10,140,6], center=true);
 }
 module wheelGearboxCover(){
     // Gearbox cover
@@ -152,7 +165,8 @@ module wheelGearboxCover(){
             translate([-45,0,0])rotate([0,90,0])cylinder(d=35+(10*2), h=1, center=true);
             translate([-53.5,0,0])rotate([0,90,0])cylinder(d=35+(10*2), h=1, center=true);
             translate([-53.5-10,0,0])rotate([0,90,0])cylinder(d=20+(10*2), h=1, center=true);
-            translate([-54.25,0,-50+5])cube([19.5,50,1], center=true);
+            translate([-54.25-3,0,-50+0.5])
+                cube([19.5+6,50,1], center=true);
         }
         wheelBearings_cutouts();
         
@@ -161,18 +175,31 @@ module wheelGearboxCover(){
     }
 }
 
+module wheelUndrivenBearingCover_boltHoles(){
+    mirrorCopy([0,1,0])
+        translate([35+5-2,70/2,-50+2.5+.25+8])
+            rotate(90)
+                metricCapheadAndBolt(6, 10, recessNut=10, recessCap=40);
+}
 module wheelUndrivenBearingCover(){
     difference(){
-        hull(){
-            translate([29+10+.5,0,0])rotate([0,90,0])cylinder(d=35+(10*2), h=1, center=true);
-            translate([29,0,0])rotate([0,90,0])cylinder(d=35+(10*2), h=1, center=true);
-            translate([21,0,0])rotate([0,90,0])cylinder(d=20+(10*2), h=1, center=true);
-            translate([35,0,-50+5])cube([10,50,1], center=true);
+        union(){
+            hull(){
+                translate([29+10+.5,0,0])rotate([0,90,0])cylinder(d=35+(10*2), h=1, center=true);
+                translate([29,0,0])rotate([0,90,0])cylinder(d=35+(10*2), h=1, center=true);
+                translate([21,0,0])rotate([0,90,0])cylinder(d=20+(10*2), h=1, center=true);
+                translate([35+5,0,-50+9])cube([20,50+40,1], center=true);
+            }
+            translate([35+5,0,-50+1.5])cube([20,50+40,15], center=true);
         }
         wheelAndGearboxCutout();   
         wheelBearings_cutouts();
+        wheelUndrivenBearingCover_boltHoles();
     }
+
 }
+
+
 
 module frame(){
     difference(){
@@ -183,10 +210,10 @@ module frame(){
         }
         wheelAndGearboxCutout();
         wheelBearings();
+        wheelUndrivenBearingCover_boltHoles();
+
     }
 }
-
-
 
 module part_wheelhub(){
 
@@ -196,11 +223,11 @@ module part_wheelhub(){
             wheelGearbox_mainGear();
         }
         rotate([0,90,0])
-            translate([0,0,20-1])
+            translate([0,0,20-1-1])
                 difference(){
                     dia=60+5;
-                    cylinder(h=5,d=dia,center=true);
-                    cylinder(h=5+1,d=dia-5,center=true);
+                    cylinder(h=5,d=dia+10,center=true);
+                    cylinder(h=5+1,d=dia-18,center=true);
                 }
         rotate([0,-90,0])
             for(i=[0:2]){
@@ -224,13 +251,15 @@ module part_wheelhub_B(){
     }
 }
 
-module part_wheelhub_render(){
+module part_wheelhub_render_outer(){
     translate([0,0,17.5-1])
         rotate([0,90,0])
             color("orange")
                 translate([0,0,0])
                     part_wheelhub_A();
-    translate([100,0,-59.5])
+}
+module part_wheelhub_render_inner(){
+    translate([0,0,-59.5])
         rotate([0,-90,0])
             color("yellow")
                 translate([50,0,0])
@@ -238,7 +267,9 @@ module part_wheelhub_render(){
 }
 
 module part_wheelhub_AB_slicer(){
-    translate([30-0.5-5,0,0])rotate([0,90,0])cylinder(h=30,d=60, center=true);
+    translate([30-0.5-5,0,0])
+        rotate([0,90,0])
+            cylinder(h=30,d=50, center=true, $fn=240);
 }
 
 module part_drivegear(){
@@ -247,8 +278,38 @@ module part_drivegear(){
             wheelGearbox_driveGear();   
 }
 
-if(printablePart=="hub"){
-    part_wheelhub_render();
+module part_frame_split_undrivenCarrier(){
+    translate([40,0,55])
+    cube([50,100,80], center=true);
+}
+module part_frame(){
+    difference(){
+        translate([0,0,56])frame();
+        part_frame_split_undrivenCarrier();
+    }
+}
+module part_frame_undrivenCarrier(){
+    intersection(){
+        translate([0,0,56])frame();
+        part_frame_split_undrivenCarrier();
+    }
+}    
+
+if(printablePart!="no" && showPrintBed && $preview){
+    color("black",0.1)
+        circle(d=255,center=true);
+}
+if(printablePart=="hub_outer"){
+    part_wheelhub_render_outer();
+}else if(printablePart=="hub_inner"){
+    part_wheelhub_render_inner();
+}else if(printablePart=="hub_roller"){
+    pcd(360/8,180)
+        part_rollers(outerDiameterMM=120,distanceBetween=215);
+}else if(printablePart=="test_frame"){
+    part_frame();
+}else if(printablePart=="test_frame_undriven_carrier"){
+    part_frame_undrivenCarrier();
 }else if(printablePart=="drivegear"){
     part_drivegear();
 }else{
