@@ -56,8 +56,8 @@ faciaDepth = 110;
 difference(){
     translate([0,(ikeaKallax.y-faciaDepth)/-2,0])
         cube([ikeaKallax.x,faciaDepth, ikeaKallax.z], center=true);
-    translate([0,-640+8,0])
-        sphere(d=1000, $fn=30);
+//    translate([0,-640+8,0])
+//        sphere(d=1000, $fn=30);
 
     computerCutouts();
     //boltCutouts();
