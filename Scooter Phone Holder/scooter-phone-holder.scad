@@ -68,17 +68,29 @@ module screw(){
             translate([0,15.4-14,-5+0.01])cylinder(h=30, d=6.2, center=true);
         }
         translate([0,0,3]){
-            hull(){
-                translate([0,0,(150/2)-0.01])cylinder(h=150, d1=16,d2=30, center=true);
-                translate([0,15.4-14,(150/2)-0.01])cylinder(h=150, d1=16,d2=30, center=true);
+            #hull(){
+                translate([0,0,0-0.01])cylinder(h=1, d=16, center=true);
+                translate([0,-17,150-0.01])cylinder(h=1, d=30, center=true);
+                translate([0,15.4-14,0-0.01])cylinder(h=1, d=16, center=true);
+                translate([0,-17+15.4-14,150-0.01])cylinder(h=1, d=30, center=true);
             }
+            
         }
     }
 }
 
 module holes(){
-    translate(mountOffset)screw();
-    rotate([-18.7,0,0])translate([0,57.31,125.0635])cube([100,30,30], center=true);
+    translate(mountOffset)
+        screw();
+    rotate([-18.7,0,0])
+        translate([0,57.31,125.0635])
+            cube([100,30,30], center=true);
+    translate(cradleOffset)rotate([-90+angleOfTheDangle,0,0]){
+        translate([0,-10,+2.5]){
+            color("green")
+                qi_charger();
+        }
+    }
 }
 
 module mount(){
@@ -150,11 +162,40 @@ module sectioner(){
 }
 
 
-
-translate([0,-6,28])rotate([90+18.7,0,0])difference(){
-    plastic();
-    holes();
-    //flattener();
-    //scale($preview?1:0)sectioner();
+module scooter_mount(){
+    translate([0,-6,28])rotate([90+18.7,0,0])difference(){
+        plastic();
+        //qi_charger();
+        holes();
+        //flattener();
+        //scale($preview?1:0)sectioner();
+    }
 }
-/**/
+
+module qi_charger(){
+    translate([0,-22,-3]){
+        translate([0,0,4])
+            cylinder(d=60,h=2.01, center=true);
+        cylinder(d=56,h=6, center=true);
+        translate([0,-50,-3])
+            rotate([90+10,0,0])
+                hull()
+                    mirrorCopy()
+                        translate([2.5,0,0])
+                            cylinder(d=6.5,h=50, center=true);
+        
+        //translate([0,-50,0])
+        //    cube([11,50,6], center=true);
+    }
+}
+//scooter_mount();
+//clamshell();
+difference(){
+    translate([0,-22,-3]){
+        hull()mirrorCopy([0,1,0])mirrorCopy([1,0,0])translate([40-(20/2),40-(20/2),0])cylinder(d=20, h=10, center=true);
+    }
+    #qi_charger();
+    
+}
+
+translate([100,-22,0])cylinder(d=60,h=2, center=true);
