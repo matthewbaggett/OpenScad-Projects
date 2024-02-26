@@ -1,9 +1,10 @@
 mountOffset= [0,12,0];
 angleOfTheDangle=41;
 cradleOffset = [0,70,90];
+radius=5;
 
 use <../Lib/mirrorcopy.scad>
-$fn=$preview?30:60;
+$fn=$preview?30:120;
 
 //color("green")translate([-3.5,0,0])import("Backpack_for_Titan_-_large_slits.stl");
 
@@ -25,7 +26,6 @@ module titan(){
 }
 
 //titan();
-radius=5;
 module clamshell_body(){
     hull(){
         mirrorCopy(){
@@ -68,7 +68,7 @@ module screw(){
             translate([0,15.4-14,-5+0.01])cylinder(h=30, d=6.2, center=true);
         }
         translate([0,0,3]){
-            #hull(){
+            hull(){
                 translate([0,0,0-0.01])cylinder(h=1, d=16, center=true);
                 translate([0,-17,150-0.01])cylinder(h=1, d=30, center=true);
                 translate([0,15.4-14,0-0.01])cylinder(h=1, d=16, center=true);
@@ -173,10 +173,10 @@ module scooter_mount(){
 }
 
 module qi_charger(){
-    translate([0,-22,-3]){
+    translate([0,-22+15,-3]){
         translate([0,0,4])
             cylinder(d=60,h=2.01, center=true);
-        cylinder(d=56,h=6, center=true);
+        cylinder(d=56+0.5,h=6, center=true);
         translate([0,-50,-3])
             rotate([90+10,0,0])
                 hull()
@@ -188,14 +188,26 @@ module qi_charger(){
         //    cube([11,50,6], center=true);
     }
 }
-//scooter_mount();
+/*module qi_mount_test(){
+    difference(){
+        translate([0,0,-135-.6]+[0,0,15])
+            rotate([-59.7,0,90])
+                scooter_mount();
+        translate([0,0,-50])cube([200,200,100], center=true);
+        #translate([-60,0,0])cube([100,200,100], center=true);
+    }
+}
+//qi_mount_test();
+*/
+scooter_mount();
+
 //clamshell();
-difference(){
+/*difference(){
     translate([0,-22,-3]){
         hull()mirrorCopy([0,1,0])mirrorCopy([1,0,0])translate([40-(20/2),40-(20/2),0])cylinder(d=20, h=10, center=true);
     }
     #qi_charger();
     
-}
+}*/
 
-translate([100,-22,0])cylinder(d=60,h=2, center=true);
+//translate([100,-22,0])cylinder(d=60,h=2, center=true);

@@ -1,0 +1,12 @@
+rotate([90,0,0])translate([1.2-(10.4/2),4.68,1.45-(10.4/2)]){
+    union(){
+        import("STL/Body_Whole_fixed.stl");
+        import("STL/Head_fixed.stl");
+        //import("STL/L_Arms_fixed.stl");
+        //import("STL/R_Arms.stl");
+        //import("STL/L_Feet_fixed.stl");
+        //import("STL/R_Feet_fixed.stl");
+        //import("STL/Tail.stl");
+        //import("STL/Platform_Rock.stl");
+    }
+}
