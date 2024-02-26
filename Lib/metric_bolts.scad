@@ -1,3 +1,4 @@
+use <mirrorcopy.scad>
 capSizeMSizeMultiplier = 1.66*1.01;
 printingKerfMM = 0.6;
 circleFacets = 60;
@@ -64,6 +65,15 @@ module metricSocketScrew(mSize, length, structural=false, recessCap=0, chamfer=f
     metricSocketCap(mSize, length, structural=structural, recessCap=recessCap, chamfer=chamfer, overrideCapSize=overrideCapSize);
     metricShaft(mSize, length, structural=structural);
 }
+module metricSocketScrewSlot(mSize, length, width, structural=false, recessCap=0, chamfer=false, overrideCapSize=0){
+    
+    hull()mirrorCopy()
+        translate([width/2,0,0])
+            metricSocketCap(mSize, length, structural=structural, recessCap=recessCap, chamfer=chamfer, overrideCapSize=overrideCapSize);
+    hull()mirrorCopy()
+        translate([width/2,0,0])
+            metricShaft(mSize, length, structural=structural);
+}
 
 module metricCapheadAndBolt(mSize, length=40, structural=false, recessCap=0, recessNut=0, recessNutIsCircleMM=false, chamfer=false, overrideCapSize=0){
     capSize = overrideCapSize > 0 ? overrideCapSize : (mSize * capSizeMSizeMultiplier) + printingKerfMM;
@@ -82,7 +92,26 @@ module metricCapheadAndBolt(mSize, length=40, structural=false, recessCap=0, rec
         metricBoltHex(mSize,structural, recessNut=recessNut, recessNutIsCircleMM=recessNutIsCircleMM, chamfer=chamfer);
     }
 }
+module metricCapheadAndNutsert(mSize, length=40, nutsertLength=13, mSizeRatio=1.35 ,structural=false, recessCap=0, chamfer=false,overrideCapSize=0){
+        capSize = overrideCapSize > 0 ? overrideCapSize : (mSize * capSizeMSizeMultiplier) + printingKerfMM;
+    
+    translate([0,0,((length/2)+((mSize*1.25)/2))*-1])
+    union(){
+        translate([0, 0, 0])
+        metricSocketScrew(mSize, length, structural=structural, recessCap=recessCap, chamfer=chamfer, overrideCapSize=overrideCapSize);
+        metricThreadedNutsert(mSize, length=nutsertLength,mSizeRatio=mSizeRatio);
+    }
+}
 
+module metricThreadedNutsert(mSize, length=13, mSizeRatio=1.35){
+    width = mSize * mSizeRatio;
+    translate([0,0,-1]){
+        translate([0,0,length/2])
+            cylinder(h=length, d=width, center=true);
+        translate([0,0,length/8/2])
+            cylinder(h=length/8, d2=width, d1=width*1.1, center=true);
+    }
+}
 /**/
 translate([0,10,0])
 metricCapheadAndBolt(6, 40);
@@ -92,6 +121,13 @@ metricCapheadAndBolt(6, 40, recessNut=20, recessNutIsCircleMM=20);
 
 translate([20,10,0])
 metricCapheadAndBolt(6, 40, recessNut=1, recessCap=1, chamfer=true);
+
+translate([40,10,0]){
+    metricCapheadAndNutsert(6, 40, 13, recessCap=1, chamfer=true);
+}
+translate([60,10,0]){
+    metricSocketScrewSlot(6,40,10);
+}
 /**/
 /*
 translate([0,10,0])

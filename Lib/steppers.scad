@@ -3,7 +3,7 @@
  */
 use <mirrorcopy.scad>;
 module stepper28BYJ48(){
-    color("light grey"){
+    color("lightgrey"){
         translate([0,-8,0]){
             // Motor body
             translate([0,0,(19/2)*-1]){
@@ -110,4 +110,8 @@ module nema17_cutout(shaft=false){
     nemaCutout(22,5,24,42.3,31,3,2, shaft);
 }
 
+module nema23_cutout(shaft=false){
+    //nemaCutout(, shaft);
+}
 nema17_cutout(true);
+//nema23_cutout(true);

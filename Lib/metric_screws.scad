@@ -15,7 +15,7 @@ d = mSize;
     color("lightblue",0.2){
         if(recessCap){
             translate([0,0,(length+recessCap)/2])
-                cylinder(d=dk,h=recessCap, center=true);
+                cylinder(d=dk,h=recessCap+0.01, center=true);
         }
     }
 }
