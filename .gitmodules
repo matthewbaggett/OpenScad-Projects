@@ -1,3 +1,6 @@
 [submodule "dotSCAD"]
 	path = dotSCAD
 	url = git@github.com:JustinSDK/dotSCAD.git
+[submodule "Lib"]
+	path = Lib
+	url = ssh://git@git.grey.ooo:222/greyscale/MattSCAD.git
