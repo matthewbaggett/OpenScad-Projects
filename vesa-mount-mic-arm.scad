@@ -1,14 +1,13 @@
 vesa_spacing_mm = 100;
 vesa_hole_mm = 4.5;
 vesa_hole_shoulders_mm = 30;
-spacer_thickness_mm = 65;
+spacer_thickness_mm = 40;
 microphone_hole_dia_mm = 16.25;
-move_arms_outwards_by_mm = 0;
 $fn = $preview?30:120;
 use <Lib/mirrorcopy.scad>;
 use <Lib/metric_bolts.scad>;
 
-arm_offset=((vesa_spacing_mm-25)/2)-5+ move_arms_outwards_by_mm;
+arm_offset=((vesa_spacing_mm-25)/2)-5;
 
 module screwHoles(){
     mirrorCopy([1,0,0],[0,1,0])
@@ -76,10 +75,10 @@ module vesaMountCavityCutouts(){
 
 module bolt(){
     translate([0,25/2,+1.5])
-    metricCapheadAndBolt(5, 30, recessNut=spacer_thickness_mm/2, recessCap=spacer_thickness_mm/2, chamfer=true);
+    metricCapheadAndBolt(5, 30, recessNut=10, recessCap=10, chamfer=true);
 }
     
-module arm(){
+module arm(bolt_positive){
     difference(){
         union(){
             hull(){
@@ -90,9 +89,21 @@ module arm(){
                 translate([0,25,0])rotate([90,0,0])scale([1,1.15,1])cylinder(h=0.001,d=25, center=true);
                 translate([0,25+30/2,0])sphere(d=28);
             }
-            bolt();
+            hull(){
+                translate([0,25+30/2,0])sphere(d=28);
+                //translate([-60,130,15])rotate([90,0,0])cylinder(d=30,h=0.001,center=true);
+                translate([-70,150,15])sphere(d=35);
+            }
+            if(bolt_positive)bolt();
         }
         union(){
+            if(!bolt_positive){
+                bolt();
+            
+                translate([0,2.5,0]){
+                    cube([50,1.01,50], center=true);
+                }
+            }
             translate([-70,150,15]){
                 rotate([-90+45,-5,0]){
                     cylinder(h=20,d=microphone_hole_dia_mm, center=false);
@@ -103,23 +114,7 @@ module arm(){
 }
 
 
-mirrorCopy([0,1,0],[1,1,0])
-difference(){
-    
-    mirrorCopy([0,0,1])difference(){
-        vesaMountBody();
-        vesaMountBodyCutouts();
-    }    
-    union(){
-        screwHoles();
-        
-        vesaMountCavityCutouts();
-        translate([0,arm_offset,0]){
-            #arm();
-        }
-    }
-    mirrorCopy([1,0,0]){
-        rotate([0,0,-45])translate([0,200/-2,100/-2])cube([200,200,100]);
-    }
+translate([0,arm_offset+40,0]){
+    arm(bolt_positive=false);
 }
 

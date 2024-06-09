@@ -1,0 +1,40 @@
+{
+    "fileFormatVersion": "1",
+    "parameterSets": {
+        "New set 1": {
+            "show_arm": "true",
+            "show_spacer": "false",
+            "spacer_thickness_mm": "40",
+            "vesa_hole_mm": "4.5",
+            "vesa_hole_shoulders_mm": "30",
+            "vesa_spacing_mm": "100"
+        },
+        "New set 2": {
+            "microphone_hole_dia_mm": "16.25",
+            "show_arm": "false",
+            "show_spacer": "true",
+            "spacer_thickness_mm": "40",
+            "vesa_hole_mm": "4.5",
+            "vesa_hole_shoulders_mm": "30",
+            "vesa_spacing_mm": "100"
+        },
+        "New set 3": {
+            "microphone_hole_dia_mm": "16.25",
+            "show_arm": "false",
+            "show_spacer": "true",
+            "spacer_thickness_mm": "40",
+            "vesa_hole_mm": "4.5",
+            "vesa_hole_shoulders_mm": "30",
+            "vesa_spacing_mm": "100"
+        },
+        "New set 4": {
+            "microphone_hole_dia_mm": "16.25",
+            "show_arm": "false",
+            "show_spacer": "true",
+            "spacer_thickness_mm": "40",
+            "vesa_hole_mm": "4.5",
+            "vesa_hole_shoulders_mm": "30",
+            "vesa_spacing_mm": "100"
+        }
+    }
+}
